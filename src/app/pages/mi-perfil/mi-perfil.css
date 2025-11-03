@@ -1,0 +1,125 @@
+/* Contenedor principal */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--background-overlay);
+  backdrop-filter: blur(6px);
+  padding: 2rem;
+}
+
+/* Tarjeta */
+.profile-card {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.6s ease;
+}
+
+/* Títulos */
+.profile-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+}
+
+.profile-subtitle {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+/* Info de usuario */
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  object-fit: cover;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.profile-name {
+  font-size: 1.3rem;
+  color: var(--text-color);
+}
+
+.profile-username {
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+}
+
+.profile-description {
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+/* Publicaciones */
+.profile-posts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-post-item {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.6rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.6rem;
+  transition: background 0.3s;
+}
+
+.profile-post-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.post-title {
+  font-weight: 500;
+}
+
+.post-date {
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+}
+
+/* Estado sin publicaciones */
+.no-posts {
+  color: var(--secondary-text-color);
+  font-style: italic;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

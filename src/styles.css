@@ -1,1 +1,172 @@
-/* You can add global styles to this file, and also import other style files */
+/* Variables de color - paleta biofilica */
+:root {
+    --verde-bosque: #2e5939;
+    --verde-oliva: #7da37d;
+    --azul-marino: #274e55;
+    --azul-agua: #a3d5ce;
+    --tierra: #f4eee0;
+    --arena: #e6dbc9;
+    --naranja-acento: #e67e22;
+    --amarillo-mostaza: #f1c40f;
+    --gris-texto: #444;
+    --blanco: #fff;
+}
+
+/* Tipografia base */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--tierra);
+    color: var(--gris-texto);
+    min-height: 100vh;
+}
+
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;  
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--arena);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--verde-oliva);
+    border-radius: 8px;
+}
+
+/* Links */
+a {
+    color: var(--verde-bosque);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--naranja-acento);
+}
+
+/* Botones generales */
+button {
+    background-color: var(--naranja-acento);
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+button:hover {
+    background-color: var(--amarillo-mostaza);
+    transform: translateY(-1px);
+}
+
+/* Inputs generales */
+input, textarea, select {
+    width: 100%;
+    border: 1px solid var(--verde-oliva);
+    border-radius: 6px;
+    padding: 10px;
+    background-color: var(--blanco);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--naranja-acento);
+    box-shadow: 0 0 5px rgba(230, 126, 34, 0.4);
+    outline: none;
+}
+
+/* Contenedor principal */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Tarjetas generales */
+.card {
+    background-color: var(--blanco);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Imagen de perfil circular */
+.img-profile {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--verde-oliva);
+}
+
+/* Modal general */
+.modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--blanco);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Boton flotante (FAB) */
+.fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: var(--naranja-acento);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    color: var(--blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.fab:hover {
+    transform: scale(1.08);
+}
+
+/* Animaciones suaves */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+

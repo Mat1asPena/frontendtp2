@@ -1,76 +1,104 @@
-<section class="card">
-    <h2>Registro</h2>
-    <form (submit)="$any($event).preventDefault(); submit()" [formGroup]="form" novalidate>
-        <label>Nombre
-        <input formControlName="nombre">
-        @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
-            <small>Requerido</small>
-        }
-        </label>
+<section class="register-page">
+    <div class="register-overlay"></div>
 
-        <label>Apellido
-        <input formControlName="apellido">
-        @if (form.get('apellido')?.touched && form.get('apellido')?.invalid) {
-            <small>Requerido</small>
-        }
-        </label>
+    <div class="register-container">
+        <div class="register-card">
+        <h2 class="register-title">Registro</h2>
 
-        <label>Correo
-        <input formControlName="correo" type="email">
-        @if (form.get('correo')?.touched && form.get('correo')?.hasError('email')) {
-            <small>Email inválido</small>
-        }
-        </label>
+        <form 
+            class="register-form"
+            (submit)="$any($event).preventDefault(); submit()" 
+            [formGroup]="form" 
+            novalidate
+        >
 
-        <label>Nombre de usuario
-        <input formControlName="nombreUsuario">
-        @if (form.get('nombreUsuario')?.touched && form.get('nombreUsuario')?.invalid) {
-            <small>Requerido (min 4)</small>
-        }
-        </label>
+            <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input class="form-input" formControlName="nombre">
+            @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+                <small class="form-error">Requerido</small>
+            }
+            </div>
 
-        <label>Contraseña
-        <input formControlName="password" type="password">
-        @if (form.get('password')?.touched && form.get('password')?.hasError('minlength')) {
-            <small>Mín 8</small>
-        }
-        @if (form.get('password')?.touched && form.get('password')?.hasError('pattern')) {
-            <small>Debe tener 1 mayúscula y 1 número</small>
-        }
-        </label>
+            <div class="form-group">
+            <label class="form-label">Apellido</label>
+            <input class="form-input" formControlName="apellido">
+            @if (form.get('apellido')?.touched && form.get('apellido')?.invalid) {
+                <small class="form-error">Requerido</small>
+            }
+            </div>
 
-        <label>Repetir contraseña
-        <input formControlName="confirmPassword" type="password">
-        @if (form.get('confirmPassword')?.touched && form.get('confirmPassword')?.hasError('mismatch')) {
-            <small>No coincide</small>
-        }
-        </label>
+            <div class="form-group">
+            <label class="form-label">Correo</label>
+            <input class="form-input" formControlName="correo" type="email">
+            @if (form.get('correo')?.touched && form.get('correo')?.hasError('email')) {
+                <small class="form-error">Email inválido</small>
+            }
+            </div>
 
-        <label>Fecha de nacimiento
-        <input formControlName="fechaNacimiento" type="date">
-        </label>
+            <div class="form-group">
+            <label class="form-label">Nombre de usuario</label>
+            <input class="form-input" formControlName="nombreUsuario">
+            @if (form.get('nombreUsuario')?.touched && form.get('nombreUsuario')?.invalid) {
+                <small class="form-error">Requerido (min 4)</small>
+            }
+            </div>
 
-        <label>Descripción
-        <textarea formControlName="descripcion"></textarea>
-        </label>
+            <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input class="form-input" formControlName="password" type="password">
+            @if (form.get('password')?.touched && form.get('password')?.hasError('minlength')) {
+                <small class="form-error">Mín 8</small>
+            }
+            @if (form.get('password')?.touched && form.get('password')?.hasError('pattern')) {
+                <small class="form-error">Debe tener 1 mayúscula y 1 número</small>
+            }
+            </div>
 
-        <label>Imagen de perfil
-        <input type="file" (change)="onFileChange($event)" accept="image/*">
-        </label>
+            <div class="form-group">
+            <label class="form-label">Repetir contraseña</label>
+            <input class="form-input" formControlName="confirmPassword" type="password">
+            @if (form.get('confirmPassword')?.touched && form.get('confirmPassword')?.hasError('mismatch')) {
+                <small class="form-error">No coincide</small>
+            }
+            </div>
 
-        @if (imagenPreview) {
-        <div>
-            <p>Preview:</p>
-            <img [src]="imagenPreview" alt="preview" style="max-width:120px; border-radius:8px;">
+            <div class="form-group">
+            <label class="form-label">Fecha de nacimiento</label>
+            <input class="form-input" formControlName="fechaNacimiento" type="date">
+            </div>
+
+            <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-textarea" formControlName="descripcion"></textarea>
+            </div>
+
+            <div class="form-group">
+            <label class="form-label">Imagen de perfil</label>
+            <input class="form-input-file" type="file" (change)="onFileChange($event)" accept="image/*">
+            </div>
+
+            @if (imagenPreview) {
+            <div class="preview-container">
+                <p class="preview-text">Preview:</p>
+                <img class="preview-image" [src]="imagenPreview" alt="preview">
+            </div>
+            }
+
+            <div class="form-actions">
+            <button class="btn-register" type="submit" [disabled]="loading">Registrarme</button>
+            </div>
+
+            @if (errorMsg) {
+            <p class="error-message">{{errorMsg}}</p>
+            }
+
+        </form>
+
+        <p class="register-footer">
+            ¿Ya tenés cuenta? 
+            <a href="/login">Iniciá sesión</a>
+        </p>
         </div>
-        }
-
-        <div class="actions">
-        <button type="submit" [disabled]="loading">Registrarme</button>
-        </div>
-
-        @if (errorMsg) {
-        <p class="error">{{errorMsg}}</p>
-        }
-    </form>
+    </div>
 </section>

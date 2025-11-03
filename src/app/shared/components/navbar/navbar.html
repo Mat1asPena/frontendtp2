@@ -1,0 +1,36 @@
+<nav class="navbar">
+    <div class="navbar-overlay"></div>
+
+    <div class="navbar-container">
+        <!-- Logo / Nombre -->
+        <a href="/" class="navbar-logo">
+        🌿 EcoRed
+        </a>
+
+        <!-- Menú principal -->
+        <ul class="navbar-links">
+        <li><a href="publicaciones">Publicaciones</a></li>
+        <li><a href="mi-perfil">Mi perfil</a></li>
+        <li><a href="register">Registro</a></li>
+        <li><a href="login">Iniciar sesión</a></li>
+        </ul>
+
+        <!-- Botón hamburguesa para mobile -->
+        <button class="navbar-toggle" (click)="toggleMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        </button>
+    </div>
+
+    <!-- Menú desplegable en mobile -->
+    <div class="navbar-mobile" [class.open]="menuAbierto">
+        <ul>
+        <li><a href="publicaciones" (click)="toggleMenu()">Publicaciones</a></li>
+        <li><a href="mi-perfil" (click)="toggleMenu()">Mi perfil</a></li>
+        <li><a href="register" (click)="toggleMenu()">Registro</a></li>
+        <li><a href="login" (click)="toggleMenu()">Iniciar sesión</a></li>
+        </ul>
+    </div>
+</nav>
+

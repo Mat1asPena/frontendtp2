@@ -1,20 +1,21 @@
-<section class="card">
-    <h2>Iniciar sesión</h2>
-    <form (submit)="$any($event).preventDefault(); submit()" [formGroup]="form" novalidate>
-        <label>Usuario o correo
-        <input formControlName="identifier">
-        </label>
+<section class="login-page">
+    <div class="login-overlay"></div>
+    <div class="login-container">
+        <h1>Iniciar sesión</h1>
 
-        <label>Contraseña
-        <input formControlName="password" type="password">
-        </label>
+        <form class="login-form" (submit)="$any($event).preventDefault(); submit()" [formGroup]="form" novalidate>
+        <input formControlName="identifier" placeholder="Usuario o correo">
+        <input formControlName="password" type="password" placeholder="Contraseña">
 
-        <div class="actions">
-        <button type="submit" [disabled]="loading">Entrar</button>
+        <button class="login-btn" type="submit" [disabled]="loading">Entrar</button>
+
+        @if (errorMsg) { 
+            <p class="error-message">{{errorMsg}}</p> 
+        }
+        </form>
+
+        <div class="login-footer">
+        ¿No tenés cuenta? <a href="/register">Registrate</a>
         </div>
-
-        @if (errorMsg) { <p class="error" >{{errorMsg}}</p> }
-        
-    </form>
-    <p>¿No tenés cuenta? <a routerLink="/register">Registrate</a></p>
+    </div>
 </section>

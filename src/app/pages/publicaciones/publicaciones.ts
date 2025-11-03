@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
 
 interface PostStub {
   id: string;
@@ -20,15 +20,23 @@ interface PostStub {
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
-export class Publicaciones {
+export class Publicaciones implements OnInit {
   posts: PostStub[] = [];
   orderBy: 'fecha'|'likes' = 'fecha';
   page = 0;
   limit = 5;
+  private isBrowser: boolean;
 
-  constructor(public auth: AuthService) {}
+  constructor(
+    public auth: AuthService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit() {
+    if (!this.isBrowser) return;
+    
     // Sprint1: usar local mock o traer desde backend si está listo
     const mockPosts = localStorage.getItem('mockPosts');
     if (mockPosts) this.posts = JSON.parse(mockPosts);
@@ -47,6 +55,8 @@ export class Publicaciones {
   }
 
   toggleLike(post: PostStub) {
+    if (!this.isBrowser) return;
+
     // Sprint1: simulación local
     const currentUser = this.auth.getUser()?.nombreUsuario || 'anon';
     const key = `likes_${post.id}`;
@@ -62,6 +72,8 @@ export class Publicaciones {
   }
 
   deletePost(postId: string) {
+    if (!this.isBrowser) return;
+
     // baja lógica simulada: lo remuevo en sprint1
     this.posts = this.posts.filter(p => p.id !== postId);
     localStorage.setItem('mockPosts', JSON.stringify(this.posts));

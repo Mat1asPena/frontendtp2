@@ -1,36 +1,43 @@
-<section>
-    <header>
-        <h2>Publicaciones</h2>
-        <div>
-        <label>Ordenar:
-            <select (change)="changeOrder($any($event.target).value)">
-            <option value="fecha">Fecha</option>
-            <option value="likes">Me gusta</option>
+<section class="posts-page">
+    <div class="posts-overlay"></div>
+
+    <div class="posts-container">
+        <header class="posts-header">
+        <h2 class="posts-title">Publicaciones</h2>
+
+        <div class="posts-filter">
+            <label class="posts-label">Ordenar:
+            <select class="posts-select" (change)="changeOrder($any($event.target).value)">
+                <option value="fecha">Fecha</option>
+                <option value="likes">Me gusta</option>
             </select>
-        </label>
+            </label>
         </div>
-    </header>
+        </header>
 
-    <div class="posts">
-        @for ( post of posts; track limit;) {
-        <article class="post-card">
-            <h3>{{post.titulo}}</h3>
-            <p>{{post.mensaje}}</p>
-            <div class="meta">
-            <span>{{post.likes}} ♥</span>
-            <span>{{post.fecha | date:'short'}}</span>
+        <div class="posts-list">
+        @for (post of posts; track $index;) {
+            <article class="post-card">
+            <h3 class="post-title">{{post.titulo}}</h3>
+            <p class="post-message">{{post.mensaje}}</p>
+
+            <div class="post-meta">
+                <span class="post-likes">{{post.likes}} ♥</span>
+                <span class="post-date">{{post.fecha | date:'short'}}</span>
             </div>
-            <div class="actions">
-            <button (click)="toggleLike(post)">Me gusta / quitar</button>
-            @if (auth.getUser()?.nombreUsuario === post.author) {
-                <button (click)="deletePost(post.id)">Eliminar</button>
-            }
+
+            <div class="post-actions">
+                <button class="btn-like" (click)="toggleLike(post)">Me gusta / quitar</button>
+                @if (auth.getUser()?.nombreUsuario === post.author) {
+                <button class="btn-delete" (click)="deletePost(post.id)">Eliminar</button>
+                }
             </div>
-        </article>
+            </article>
         }
-    </div>
+        </div>
 
-    <div class="more">
-        <button (click)="loadMore()">Cargar más</button>
+        <div class="posts-more">
+        <button class="btn-loadmore" (click)="loadMore()">Cargar más</button>
+        </div>
     </div>
 </section>

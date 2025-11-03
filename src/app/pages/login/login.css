@@ -1,0 +1,115 @@
+/* Fondo general */
+.login-page {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background: url('/public/images/background.png') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Capa de superposición verde translúcida */
+.login-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(46, 89, 57, 0.6); /* var(--verde-bosque) con transparencia */
+    backdrop-filter: blur(4px);
+    z-index: 0;
+}
+
+/* Contenedor del formulario */
+.login-container {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.92);
+    border-radius: 16px;
+    padding: 40px 50px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+}
+
+/* Logo o título */
+.login-container h1 {
+    font-size: 1.8rem;
+    color: var(--verde-bosque);
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+/* Campos del formulario */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.login-form input {
+    border: none;
+    border-bottom: 2px solid var(--verde-oliva);
+    background: transparent;
+    padding: 12px 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.login-form input:focus {
+    border-color: var(--naranja-acento);
+    outline: none;
+}
+
+/* Botón principal */
+.login-btn {
+    background-color: var(--naranja-acento);
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: var(--amarillo-mostaza);
+    transform: translateY(-1px);
+}
+
+/* Texto inferior (enlace a registro) */
+.login-footer {
+    margin-top: 25px;
+    font-size: 0.9rem;
+    color: var(--gris-texto);
+}
+
+.login-footer a {
+    color: var(--naranja-acento);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+    color: var(--amarillo-mostaza);
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividad */
+@media (max-width: 500px) {
+    .login-container {
+        padding: 30px 25px;
+        max-width: 90%;
+    }
+
+    .login-container h1 {
+        font-size: 1.5rem;
+    }
+}
