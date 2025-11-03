@@ -1,3 +1,4 @@
+/* ===== NAVBAR GENERAL ===== */
 .navbar {
   position: fixed;
   top: 0;
@@ -10,6 +11,7 @@
   z-index: 1000;
 }
 
+/* Overlay con tono verde suave */
 .navbar-overlay {
   position: absolute;
   inset: 0;
@@ -29,7 +31,11 @@
   align-items: center;
 }
 
+/* ===== LOGO ===== */
 .navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 1.4rem;
@@ -42,10 +48,20 @@
   color: var(--naranja-acento);
 }
 
+/* Ícono (favicon) */
+.navbar-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* ===== LINKS ===== */
 .navbar-links {
   display: flex;
   gap: 25px;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-links a {
@@ -60,7 +76,7 @@
   color: var(--verde-bosque);
 }
 
-/* Botón hamburguesa */
+/* ===== BOTÓN HAMBURGUESA ===== */
 .navbar-toggle {
   display: none;
   flex-direction: column;
@@ -78,7 +94,7 @@
   transition: all 0.3s ease;
 }
 
-/* Menú móvil */
+/* ===== MENÚ MÓVIL ===== */
 .navbar-mobile {
   display: none;
   position: fixed;
@@ -115,7 +131,7 @@
   color: var(--verde-bosque);
 }
 
-/* Responsivo */
+/* ===== RESPONSIVO ===== */
 @media (max-width: 768px) {
   .navbar-links {
     display: none;
