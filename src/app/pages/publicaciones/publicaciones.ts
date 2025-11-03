@@ -15,6 +15,7 @@ interface PostStub {
 
 @Component({
   selector: 'app-publicaciones',
+  standalone: true,
   imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',

@@ -16,6 +16,7 @@ function passwordValidator(controlName: string) {
 
 @Component({
   selector: 'app-register',
+  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './register.html',
   styleUrl: './register.css',

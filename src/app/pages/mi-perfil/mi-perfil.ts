@@ -10,6 +10,7 @@ interface Post {
 
 @Component({
   selector: 'app-mi-perfil',
+  standalone: true,
   imports: [DatePipe],
   templateUrl: './mi-perfil.html',
   styleUrl: './mi-perfil.css',
