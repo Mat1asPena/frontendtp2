@@ -1,0 +1,36 @@
+<section>
+    <header>
+        <h2>Publicaciones</h2>
+        <div>
+        <label>Ordenar:
+            <select (change)="changeOrder($any($event.target).value)">
+            <option value="fecha">Fecha</option>
+            <option value="likes">Me gusta</option>
+            </select>
+        </label>
+        </div>
+    </header>
+
+    <div class="posts">
+        @for ( post of posts; track limit;) {
+        <article class="post-card">
+            <h3>{{post.titulo}}</h3>
+            <p>{{post.mensaje}}</p>
+            <div class="meta">
+            <span>{{post.likes}} ♥</span>
+            <span>{{post.fecha | date:'short'}}</span>
+            </div>
+            <div class="actions">
+            <button (click)="toggleLike(post)">Me gusta / quitar</button>
+            @if (auth.getUser()?.nombreUsuario === post.author) {
+                <button (click)="deletePost(post.id)">Eliminar</button>
+            }
+            </div>
+        </article>
+        }
+    </div>
+
+    <div class="more">
+        <button (click)="loadMore()">Cargar más</button>
+    </div>
+</section>

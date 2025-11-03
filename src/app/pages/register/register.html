@@ -1,0 +1,76 @@
+<section class="card">
+    <h2>Registro</h2>
+    <form (submit)="$any($event).preventDefault(); submit()" [formGroup]="form" novalidate>
+        <label>Nombre
+        <input formControlName="nombre">
+        @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+            <small>Requerido</small>
+        }
+        </label>
+
+        <label>Apellido
+        <input formControlName="apellido">
+        @if (form.get('apellido')?.touched && form.get('apellido')?.invalid) {
+            <small>Requerido</small>
+        }
+        </label>
+
+        <label>Correo
+        <input formControlName="correo" type="email">
+        @if (form.get('correo')?.touched && form.get('correo')?.hasError('email')) {
+            <small>Email inválido</small>
+        }
+        </label>
+
+        <label>Nombre de usuario
+        <input formControlName="nombreUsuario">
+        @if (form.get('nombreUsuario')?.touched && form.get('nombreUsuario')?.invalid) {
+            <small>Requerido (min 4)</small>
+        }
+        </label>
+
+        <label>Contraseña
+        <input formControlName="password" type="password">
+        @if (form.get('password')?.touched && form.get('password')?.hasError('minlength')) {
+            <small>Mín 8</small>
+        }
+        @if (form.get('password')?.touched && form.get('password')?.hasError('pattern')) {
+            <small>Debe tener 1 mayúscula y 1 número</small>
+        }
+        </label>
+
+        <label>Repetir contraseña
+        <input formControlName="confirmPassword" type="password">
+        @if (form.get('confirmPassword')?.touched && form.get('confirmPassword')?.hasError('mismatch')) {
+            <small>No coincide</small>
+        }
+        </label>
+
+        <label>Fecha de nacimiento
+        <input formControlName="fechaNacimiento" type="date">
+        </label>
+
+        <label>Descripción
+        <textarea formControlName="descripcion"></textarea>
+        </label>
+
+        <label>Imagen de perfil
+        <input type="file" (change)="onFileChange($event)" accept="image/*">
+        </label>
+
+        @if (imagenPreview) {
+        <div>
+            <p>Preview:</p>
+            <img [src]="imagenPreview" alt="preview" style="max-width:120px; border-radius:8px;">
+        </div>
+        }
+
+        <div class="actions">
+        <button type="submit" [disabled]="loading">Registrarme</button>
+        </div>
+
+        @if (errorMsg) {
+        <p class="error">{{errorMsg}}</p>
+        }
+    </form>
+</section>

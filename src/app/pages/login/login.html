@@ -1,0 +1,20 @@
+<section class="card">
+    <h2>Iniciar sesión</h2>
+    <form (submit)="$any($event).preventDefault(); submit()" [formGroup]="form" novalidate>
+        <label>Usuario o correo
+        <input formControlName="identifier">
+        </label>
+
+        <label>Contraseña
+        <input formControlName="password" type="password">
+        </label>
+
+        <div class="actions">
+        <button type="submit" [disabled]="loading">Entrar</button>
+        </div>
+
+        @if (errorMsg) { <p class="error" >{{errorMsg}}</p> }
+        
+    </form>
+    <p>¿No tenés cuenta? <a routerLink="/register">Registrate</a></p>
+</section>

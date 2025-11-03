@@ -1,0 +1,17 @@
+@if (show){
+    <div class="modal-backdrop">
+        <div class="modal-window">
+            <header>
+                <h3>{{title}}</h3>
+                <button (click)="doClose()">✖</button>
+            </header>
+            <section>
+                <ng-content></ng-content>
+            </section>
+            <footer>
+                <button (click)="doClose()">Cancelar</button>
+                <button (click)="doConfirm()">Aceptar</button>
+            </footer>
+        </div>
+    </div>
+}

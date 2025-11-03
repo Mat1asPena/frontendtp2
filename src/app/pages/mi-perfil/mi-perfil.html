@@ -1,0 +1,22 @@
+    <section class="profile-card">
+    <h2>Mi perfil</h2>
+    <div class="profile">
+        <img [src]="user?.imagenUrl || 'assets/default-avatar.png'" alt="avatar" style="width:100px;height:100px;border-radius:50%">
+        <div>
+        <h3>{{user?.nombre}} {{user?.apellido}}</h3>
+        <p>@{{user?.nombreUsuario}}</p>
+        <p>{{user?.descripcion}}</p>
+        </div>
+    </div>
+
+    <h4>Últimas publicaciones</h4>
+    <ul>
+        @for (p of myPosts; track $index;) {
+        <li>{{p.titulo}} - {{p.fecha | date:'short'}}</li>
+        } @empty {
+            <li style="color: gray; font-style: italic;">
+                Todavía no publicaste nada.
+            </li>
+        }
+    </ul>
+</section>
