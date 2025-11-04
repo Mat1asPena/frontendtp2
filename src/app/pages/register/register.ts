@@ -55,33 +55,37 @@ export class Register {
   }
 
   submit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    this.loading = true;
-    const fd = new FormData();
-    Object.entries(this.form.value).forEach(([k, v]) => {
-      if (v === null || v === undefined) return;
-      if (k === 'imagen') {
-        if (v instanceof File) fd.append('imagen', v);
-      } else {
-        fd.append(k, v as any);
-      }
-    });
-    // agregar rol por defecto
-    fd.append('rol', 'usuario');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.loading = true; 
+    const fd = new FormData(); 
+
+    fd.append('nombre', this.form.get('nombre')?.value);
+    fd.append('apellido', this.form.get('apellido')?.value);
+    fd.append('correo', this.form.get('correo')?.value);
+    fd.append('nombreUsuario', this.form.get('nombreUsuario')?.value);
+    fd.append('password', this.form.get('password')?.value);
+    fd.append('fechaNacimiento', this.form.get('fechaNacimiento')?.value);
+    fd.append('descripcion', this.form.get('descripcion')?.value || '');
+    fd.append('perfil', 'usuario'); 
+
+    const file = this.form.get('imagen')?.value;
+    if (file instanceof File) fd.append('imagen', file);
 
     this.auth.register(fd).subscribe({
       next: (res) => {
         this.loading = false;
-        // en sprint1 podemos guardar user en localStorage si la API no lo hace
         if (res.user) this.auth.saveLocalUser(res.user);
-        // si el backend devuelve token guardarlo
         if (res.token) localStorage.setItem('token', res.token);
         this.router.navigate(['/publicaciones']);
       },
       error: (err) => {
         this.loading = false;
         this.errorMsg = err?.error?.message || 'Error al registrar';
-      }
+      },
     });
   }
 }

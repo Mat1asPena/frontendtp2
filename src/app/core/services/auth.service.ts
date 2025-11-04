@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = 'http://localhost:3000'; // cambiar por la URL de Render
+  private base = 'http://localhost:3000/api'; // cambiar por la URL de Render
   private isBrowser: boolean;
 
   constructor(
