@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = 'http://localhost:3000/api'; // cambiar por la URL de Render
+  private base = 'https://backendtp2-rho.vercel.app/api'; // https://backendtp2-rho.vercel.app/api || http://localhost:3000/api
   private isBrowser: boolean;
 
   constructor(
