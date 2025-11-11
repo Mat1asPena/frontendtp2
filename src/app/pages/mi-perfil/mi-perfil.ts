@@ -15,7 +15,8 @@ interface Post {
   templateUrl: './mi-perfil.html',
   styleUrl: './mi-perfil.css',
 })
-export class MiPerfil {
+
+export class MiPerfil implements OnInit {
   user: any;
   myPosts: Post[] = [];
 
@@ -24,8 +25,9 @@ export class MiPerfil {
   }
 
   ngOnInit() {
+    if (typeof window === 'undefined') return;
     const all = JSON.parse(localStorage.getItem('mockPosts') || '[]');
     const nombreUsuario = this.user?.nombreUsuario;
-    this.myPosts = all.filter((p:any)=> p.author === nombreUsuario).slice(0,3);
+    this.myPosts = all.filter((p: any) => p.author === nombreUsuario).slice(0, 3);
   }
 }

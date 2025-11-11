@@ -20,6 +20,7 @@ interface PostStub {
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
+
 export class Publicaciones implements OnInit {
   posts: PostStub[] = [];
   orderBy: 'fecha'|'likes' = 'fecha';
@@ -37,19 +38,18 @@ export class Publicaciones implements OnInit {
   ngOnInit() {
     if (!this.isBrowser) return;
     
-    // Sprint1: usar local mock o traer desde backend si está listo
     const mockPosts = localStorage.getItem('mockPosts');
     if (mockPosts) this.posts = JSON.parse(mockPosts);
     else {
-      // Genero algunos posts demo
-      this.posts = Array.from({length:8}).map((_,i)=>({
-        id: `p${i+1}`,
-        titulo: `Post demo ${i+1}`,
-        mensaje: `Mensaje de prueba ${i+1}`,
-        likes: Math.floor(Math.random()*10),
-        fecha: new Date(Date.now() - i*1000*60*60).toISOString(),
-        author: 'demoUser'
-      }));
+      this.posts = Array.from({ length: 8 }).map((_, i) => ({
+      id: `p${i + 1}`,
+      titulo: `Post demo ${i + 1}`,
+      mensaje: `Mensaje de prueba ${i + 1}`,
+      likes: Math.floor(Math.random() * 10),
+      fecha: new Date(Date.now() - i * 1000 * 60 * 60).toISOString(),
+      author: 'demoUser',
+      likedBy: []
+    }));
       localStorage.setItem('mockPosts', JSON.stringify(this.posts));
     }
   }
@@ -57,16 +57,25 @@ export class Publicaciones implements OnInit {
   toggleLike(post: PostStub) {
     if (!this.isBrowser) return;
 
-    // Sprint1: simulación local
-    const currentUser = this.auth.getUser()?.nombreUsuario || 'anon';
-    const key = `likes_${post.id}`;
-    const liked = localStorage.getItem(`${key}_${currentUser}`);
-    if (liked) {
+    const currentUser = this.auth.getUser()?.nombreUsuario;
+    if (!currentUser) return;
+
+    // inicializo si no existe
+    if (!Array.isArray((post as any).likedBy)) {
+      (post as any).likedBy = [];
+    }
+
+    const likedBy = (post as any).likedBy as string[];
+    const alreadyLiked = likedBy.includes(currentUser);
+
+    if (alreadyLiked) {
+      // quitar like
       post.likes = Math.max(0, post.likes - 1);
-      localStorage.removeItem(`${key}_${currentUser}`);
+      (post as any).likedBy = likedBy.filter(u => u !== currentUser);
     } else {
-      post.likes = post.likes + 1;
-      localStorage.setItem(`${key}_${currentUser}`, '1');
+      // dar like
+      post.likes++;
+      likedBy.push(currentUser);
     }
     localStorage.setItem('mockPosts', JSON.stringify(this.posts));
   }
@@ -74,7 +83,21 @@ export class Publicaciones implements OnInit {
   deletePost(postId: string) {
     if (!this.isBrowser) return;
 
-    // baja lógica simulada: lo remuevo en sprint1
+    const currentUser = this.auth.getUser();
+    if (!currentUser) return;
+
+    const post = this.posts.find(p => p.id === postId);
+    if (!post) return;
+
+    // Solo autor o admin pueden eliminar
+    const isOwner = post.author === currentUser.nombreUsuario;
+    const isAdmin = currentUser.rol === 'administrador';
+
+    if (!isOwner && !isAdmin) {
+      alert('Solo el autor o un administrador pueden eliminar esta publicación.');
+      return;
+    }
+
     this.posts = this.posts.filter(p => p.id !== postId);
     localStorage.setItem('mockPosts', JSON.stringify(this.posts));
   }

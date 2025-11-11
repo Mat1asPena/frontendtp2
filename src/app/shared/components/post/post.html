@@ -1,1 +1,21 @@
-<p>post works!</p>
+<div class="post-card">
+    <div class="post-header">
+        <img [src]="publicacion.usuario.foto" alt="Foto perfil" class="perfil-img">
+        <h3>{{ publicacion.usuario.nombreUsuario }}</h3>
+        <small>{{ publicacion.fecha | date:'short' }}</small>
+    </div>
+
+    <p>{{ publicacion.texto }}</p>
+
+    <div class="post-actions">
+        <button (click)="toggleLike()">
+            ❤️ {{ publicacion.likes.length }}
+        </button>
+
+        @if (publicacion.usuario.id === usuarioActualId ) {
+            <button (click)="eliminarPost()">
+                🗑️ Eliminar
+            </button>
+        }
+    </div>
+</div>
