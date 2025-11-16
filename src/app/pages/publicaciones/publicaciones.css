@@ -1,171 +1,358 @@
+/* --- Paleta (La tuya, ¡es genial!) --- */
+:root {
+  --verde-bosque: #2e5939;
+  --verde-oliva: #6b8e23;
+  --verde-menta: #b8d5b8;
+  --azul-petroleo: #2f4858;
+  --tierra-suave: #f5f3ec; /* <-- Este será el color de fondo */
+  --naranja-acento: #e67e22;
+  --amarillo-mostaza: #f1c40f;
+  --gris-texto: #4a4a4a;
+  --blanco: #ffffff;
+  --borde-suave: #000000;
+}
+/* --- Reseteo Básico --- */
+* {
+  box-sizing: border-box;
+}
+
+/* --- Reseteo de márgenes --- */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+/* --- 🌍 Página principal --- */
 .posts-page {
   position: relative;
   min-height: 100vh;
   width: 100%;
-  background: url('/images/background.png') center/cover no-repeat;
+  background-color: #7e8d7e;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 80px 20px;
+  /* Aumentamos el padding para la navbar fija */
+  padding: 100px 20px 40px 20px;
 }
 
-.posts-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(46, 89, 57, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 0;
-}
-
+/* --- 🟢 Contenedor principal --- */
 .posts-container {
-  position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 850px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  padding: 30px 40px;
-  animation: fadeIn 0.8s ease;
-}
-
-/* Header */
-.posts-header {
+  max-width: 700px; /* Más angosto, estilo feed social */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 25px;
+  flex-direction: column;
+  gap: 30px; /* Espacio entre elementos */
 }
 
-.posts-title {
-  font-size: 1.8rem;
-  color: var(--verde-bosque);
-  font-weight: 600;
-}
-
-.posts-label {
-  color: var(--gris-texto);
-  font-size: 0.95rem;
-}
-
-.posts-select {
-  margin-left: 8px;
-  padding: 6px 8px;
-  border: 1px solid var(--verde-oliva);
-  border-radius: 6px;
-  background-color: #fff;
-  font-size: 0.95rem;
-  cursor: pointer;
-}
-
-/* Lista de publicaciones */
-.posts-list {
+/* --- ✏️ Formulario de "Crear Post" (Dentro del Header) --- */
+/*
+ * Este es el cambio principal: Hacemos que el header
+ * contenga el formulario y el filtro de forma ordenada.
+*/
+.posts-header {
+  /* Lo convertimos en una "tarjeta" */
+  background-color: #b8d5b8;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(46, 89, 57, 0.1);
+  animation: fadeIn 0.5s ease;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.post-card {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
-}
-
-.post-card:hover {
-  transform: translateY(-3px);
-}
-
-.post-title {
-  font-size: 1.3rem;
+.posts-title {
+  font-size: 1.5rem;
   color: var(--verde-bosque);
-  margin-bottom: 10px;
+  font-weight: 700;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--verde-menta);
+}
+
+.new-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.new-post-form input[formControlName="titulo"],
+.new-post-form textarea {
+  width: 100%;
+  border: 1px solid var(--borde-suave);
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+}
+.new-post-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.new-post-form input[formControlName="titulo"]:focus,
+.new-post-form textarea:focus {
+  border-color: var(--verde-oliva);
+}
+
+.new-post-form input[type="file"] {
+  font-size: 0.9rem;
+  color: var(--gris-texto);
+}
+/* Estilo del botón de subida de archivo (opcional pero recomendado) */
+.new-post-form input[type="file"]::file-selector-button {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background-color: var(--verde-menta);
+  color: var(--verde-bosque);
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 10px;
+  transition: background-color 0.2s;
+}
+.new-post-form input[type="file"]::file-selector-button:hover {
+  background-color: #a9c9a9;
+}
+
+.new-post-form button[type="submit"] {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  background-color: var(--verde-oliva);
+  color: var(--blanco);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-end; /* Alinea el botón a la derecha */
+}
+.new-post-form button[type="submit"]:hover {
+  background-color: var(--verde-bosque);
+}
+
+
+/* --- Filtro de Posts --- */
+.posts-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start; /* Lo alinea a la izquierda */
+  margin-top: 10px;
+}
+
+.posts-filter label {
+  color: var(--gris-texto);
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
-.post-message {
-  color: var(--gris-texto);
-  margin-bottom: 15px;
-  line-height: 1.5;
+.posts-filter select {
+  padding: 6px 10px;
+  border: 1px solid var(--verde-oliva);
+  border-radius: 8px;
+  background-color: var(--blanco);
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
 }
 
-/* Meta info */
+/* --- 🖼️ Lista de Tarjetas --- */
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Más espacio entre posts */
+}
+
+.post-card {
+  background-color: #b8d5b8;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(46, 89, 57, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  animation: fadeIn 0.5s ease;
+}
+
+/* --- Contenido del Post (Títulos, Párrafos) --- */
+/* Damos padding a los elementos de texto */
+.post-card h3,
+.post-card p {
+  padding: 0 20px;
+}
+
+.post-card h3 { /* Título del post */
+  font-size: 1.3rem;
+  color: var(--azul-petroleo);
+  margin-bottom: 10px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.post-card p { /* Mensaje del post */
+  color: var(--gris-texto);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-bottom: 15px;
+}
+
+/* Imagen */
+.post-image {
+  width: 100%;
+  max-height: 600px;
+  object-fit: cover;
+  margin-top: 10px; /* Espacio si hay texto arriba */
+}
+
+/* --- Meta (Likes y Fecha) --- */
 .post-meta {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gris-texto);
+  border-bottom: 1px solid var(--borde-suave);
+  border-top: 1px solid var(--borde-suave);
   display: flex;
   justify-content: space-between;
-  color: var(--verde-oliva);
+  margin-top: 15px;
+}
+.post-meta span:first-child { /* Likes */
+  color: var(--naranja-acento);
+}
+
+/* --- ❤️ Acciones (Botones) --- */
+.post-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background-color: var(--borde-suave); /* Línea divisoria */
+  border-bottom: 1px solid var(--borde-suave);
+}
+
+.post-actions button {
+  background-color: var(--blanco);
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gris-texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+.post-actions button:hover {
+  background-color: #f9f9f9;
+}
+
+/* Estilo para el botón de "Eliminar" */
+.post-actions button:last-child {
+  color: #c0392b;
+}
+.post-actions button:last-child:hover {
+  background-color: #fbeeee;
+  color: #e74c3c;
+}
+
+
+/* --- 🗨️ Comentarios --- */
+.post-comments {
+  padding: 15px 20px;
+}
+
+.post-comments h4 {
+  font-size: 1rem;
+  color: var(--azul-petroleo);
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.comment {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+.comment p {
+  padding: 0;
+  margin: 0 0 5px 0;
+  font-size: 0.9rem;
+}
+.comment p strong { /* Autor del comentario */
+  color: var(--verde-bosque);
+}
+.comment small { /* Fecha del comentario */
+  font-size: 0.8rem;
+  color: #999;
+}
+
+
+/* Input de Comentario (Estilo "Chat") */
+.post-comments input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 20px; /* Redondeado */
+  border: 1px solid var(--borde-suave);
+  background-color: var(--tierra-suave);
+  outline: none;
   font-size: 0.9rem;
   margin-bottom: 10px;
 }
-
-/* Botones de acción */
-.post-actions {
-  display: flex;
-  gap: 10px;
+.post-comments input:focus {
+  border-color: var(--verde-oliva);
 }
 
-.btn-like,
-.btn-delete,
-.btn-loadmore {
+.post-comments button {
+  background: var(--naranja-acento);
+  color: var(--blanco);
   border: none;
   border-radius: 8px;
-  padding: 8px 14px;
+  padding: 10px 15px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s;
 }
-
-.btn-like {
-  background-color: var(--naranja-acento);
-  color: var(--blanco);
-}
-
-.btn-like:hover {
+.post-comments button:hover {
   background-color: var(--amarillo-mostaza);
 }
 
-.btn-delete {
-  background-color: #c0392b;
-  color: var(--blanco);
-}
 
-.btn-delete:hover {
-  background-color: #e74c3c;
+/* --- Botón Cargar Más --- */
+.posts-more {
+  text-align: center;
 }
-
-.btn-loadmore {
-  background-color: var(--verde-bosque);
-  color: var(--blanco);
-  margin-top: 25px;
-  padding: 10px 20px;
+.posts-more button {
+  background-color: var(--verde-menta);
+  color: var(--verde-bosque);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 25px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-
-.btn-loadmore:hover {
+.posts-more button:hover {
   background-color: var(--verde-oliva);
-  transform: translateY(-2px);
+  color: var(--blanco);
 }
 
-/* Animación */
+/* --- Animaciones --- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsividad */
-@media (max-width: 600px) {
+/* --- Responsivo --- */
+@media (max-width: 700px) {
+  .posts-page {
+    padding-top: 80px;
+  }
   .posts-container {
-    padding: 25px 20px;
+    max-width: 100%;
+    gap: 20px;
   }
-
   .posts-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    padding: 15px;
   }
-
-  .post-title {
-    font-size: 1.2rem;
+  .new-post-form button[type="submit"] {
+    align-self: stretch; /* Ocupa todo el ancho en móvil */
   }
 }

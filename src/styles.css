@@ -23,7 +23,7 @@
 }
 
 body {
-    background-color: var(--tierra);
+    background-color: #7e8d7e;
     color: var(--gris-texto);
     min-height: 100vh;
 }
