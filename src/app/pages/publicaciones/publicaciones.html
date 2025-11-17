@@ -35,7 +35,7 @@
             </div>
 
             <div class="post-actions">
-                <button (click)="toggleLike(post)">Me gusta / quitar</button>
+                <button (click)="toggleLike(post)">♥</button>
                 @if (auth.getUser()?.nombreUsuario === post.author) {
                 <button (click)="deletePost(post.id)">Eliminar</button>
                 }
