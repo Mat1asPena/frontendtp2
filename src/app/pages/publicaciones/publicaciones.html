@@ -1,65 +1,68 @@
 <section class="posts-page">
     <div class="posts-container">
         <header class="posts-header">
-        <h2 class="posts-title">Publicaciones</h2>
+            <h2 class="posts-title">Publicaciones</h2>
 
-        <form [formGroup]="newPostForm" (ngSubmit)="createPost()" class="new-post-form">
-            <input formControlName="titulo" placeholder="Título" />
-            <textarea formControlName="mensaje" placeholder="¿Qué estás pensando?"></textarea>
-            <input type="file" (change)="newPostForm.patchValue({ imagen: $any($event.target).files[0] })" />
-            <button type="submit">Publicar</button>
-        </form>
+            <form [formGroup]="newPostForm" (ngSubmit)="createPost()" class="new-post-form">
+                <input formControlName="titulo" placeholder="Título" />
+                <textarea formControlName="mensaje" placeholder="¿Qué estás pensando?"></textarea>
+                <input type="file" (change)="newPostForm.patchValue({ imagen: $any($event.target).files[0] })" />
+                <button type="submit">Publicar</button>
+            </form>
 
-        <div class="posts-filter">
-            <label>Ordenar:
-            <select (change)="changeOrder($any($event.target).value)">
-                <option value="fecha">Fecha</option>
-                <option value="likes">Me gusta</option>
-            </select>
-            </label>
-        </div>
+            <div class="posts-filter">
+                <label>Ordenar:
+                    <select (change)="changeOrder($any($event.target).value)">
+                        <option value="fecha">Fecha</option>
+                        <option value="likes">Me gusta</option>
+                    </select>
+                </label>
+            </div>
         </header>
 
         <div class="posts-list">
-        @for (post of posts.slice(0, limit); track post.id) {
-            <article class="post-card">
-            <h3>{{ post.titulo }}</h3>
-            <p>{{ post.mensaje }}</p>
-            @if (post.imagenUrl) {
-                <img [src]="post.imagenUrl" class="post-image" alt="Imagen de publicación" />
+            @for (post of posts.slice(0, limit); track post._id) {
+                <article class="post-card">
+                    <h3>{{ post.titulo }}</h3>
+                    <p>{{ post.mensaje }}</p>
+
+                    @if (post.imagenUrl) {
+                        <img [src]="post.imagenUrl" class="post-image" alt="Imagen de publicación" />
+                    }
+
+                    <div class="post-meta">
+                        <span>{{ post.likes }} ♥</span>
+                        <span>{{ post.createdAt | date:'short' }}</span>
+                    </div>
+
+                    <div class="post-actions">
+                        <button (click)="toggleLike(post)">♥</button>
+
+                        @if (auth.getUser()?.nombreUsuario === post.author) {
+                            <button (click)="deletePost(post._id)">Eliminar</button>
+                        }
+                    </div>
+
+                    <!-- Comentarios -->
+                    <div class="post-comments">
+                        <h4>Comentarios</h4>
+
+                        <div class="comment">
+                            @for (c of post.comentarios; track c.fecha) {
+                                <p><strong>{{ c.autor }}</strong>: {{ c.texto }}</p>
+                                <small>{{ c.fecha | date:'short' }}</small>
+                            }
+                        </div>
+
+                        <input [(ngModel)]="commentText[post._id]" placeholder="Escribe un comentario..." />
+                        <button (click)="addComment(post)">Comentar</button>
+                    </div>
+                </article>
             }
-
-            <div class="post-meta">
-                <span>{{ post.likes }} ♥</span>
-                <span>{{ post.fecha | date:'short' }}</span>
-            </div>
-
-            <div class="post-actions">
-                <button (click)="toggleLike(post)">♥</button>
-                @if (auth.getUser()?.nombreUsuario === post.author) {
-                <button (click)="deletePost(post.id)">Eliminar</button>
-                }
-            </div>
-
-            <!-- Comentarios -->
-            <div class="post-comments">
-                <h4>Comentarios</h4>
-                <div class="comment">
-                    @for (c of post.comentarios; track c.fecha) {
-                <p><strong>{{ c.autor }}</strong>: {{ c.texto }}</p>
-                <small>{{ c.fecha | date:'short' }}</small>
-                }
-                </div>
-
-                <input [(ngModel)]="commentText[post.id]" placeholder="Escribe un comentario..." />
-                <button (click)="addComment(post)">Comentar</button>
-            </div>
-            </article>
-        }
         </div>
 
         <div class="posts-more">
-        <button (click)="loadMore()">Cargar más</button>
+            <button (click)="loadMore()">Cargar más</button>
         </div>
     </div>
 </section>
