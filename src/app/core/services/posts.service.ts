@@ -24,7 +24,7 @@ export interface Comentario {
     providedIn: 'root',
     })
     export class PostService {
-    private API_URL = 'http://localhost:3000/posts';
+    private API_URL = 'https://backendtp2-rho.vercel.app/api'; // https://backendtp2-rho.vercel.app/api || http://localhost:3000/api
 
     constructor(private http: HttpClient) {}
 
