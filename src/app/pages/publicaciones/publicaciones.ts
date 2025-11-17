@@ -48,18 +48,16 @@ export class Publicaciones implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.isBrowser) return;
-
     this.newPostForm = this.fb.group({
       titulo: [''],
       mensaje: [''],
       imagen: [null],
     });
 
-    // Carga REAL desde backend
-    this.loadPostsFromBackend();
+    if (this.isBrowser) {
+      this.loadPostsFromBackend();
+    }
   }
-
   // ================================
   //   GET POSTS FROM BACKEND
   // ================================
