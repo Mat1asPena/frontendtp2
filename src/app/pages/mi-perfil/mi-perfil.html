@@ -3,31 +3,28 @@
         <h2 class="profile-title">Mi perfil</h2>
 
         <div class="profile-info">
-        <img
-            [src]="user?.imagenUrl || 'assets/default-avatar.png'"
-            alt="avatar"
-            class="profile-avatar"
-        />
-        <div class="profile-details">
-            <h3 class="profile-name">{{ user?.nombre }} {{ user?.apellido }}</h3>
-            <p class="profile-username">@{{ user?.nombreUsuario }}</p>
-            <p class="profile-description">{{ user?.descripcion }}</p>
-        </div>
+            <img [src]="user?.imagenUrl || 'assets/default-avatar.png'" alt="avatar" class="profile-avatar" />
+            <div class="profile-details">
+                <h3 class="profile-name">{{ user?.nombre }} {{ user?.apellido }}</h3>
+                <p class="profile-username">@{{ user?.nombreUsuario }}</p>
+                <p class="profile-description">{{ user?.descripcion || 'Sin descripción' }}</p>
+            </div>
+            <button class="edit-btn" (click)="mostrarModal = true">✏️ Editar</button>
         </div>
 
         <h4 class="profile-subtitle">Últimas publicaciones</h4>
-
-        <ul class="profile-posts">
-        @for (p of myPosts; track $index;) {
-            <li class="profile-post-item">
-            <span class="post-title">{{ p.titulo }}</span>
-            <span class="post-date">{{ p.fecha | date: 'short' }}</span>
-            </li>
-        } @empty {
-            <li class="no-posts">
-            Todavía no publicaste nada.
-            </li>
-        }
-        </ul>
-    </div>
+        </div>
 </section>
+
+<app-modal [show]="mostrarModal" title="Editar Perfil" (close)="mostrarModal = false" (confirm)="guardarCambios()">
+    <form class="edit-form">
+        <label>Nombre:</label>
+        <input [(ngModel)]="editData.nombre" name="nombre">
+        
+        <label>Apellido:</label>
+        <input [(ngModel)]="editData.apellido" name="apellido">
+        
+        <label>Descripción:</label>
+        <textarea [(ngModel)]="editData.descripcion" name="descripcion"></textarea>
+    </form>
+</app-modal>
