@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = 'https://backendtp2-rho.vercel.app'; // https://backendtp2-rho.vercel.app/api || http://localhost:3000/api
+  private base = 'https://backendtp2-rho.vercel.app/api'; // https://backendtp2-rho.vercel.app/api || http://localhost:3000/api
   private isBrowser: boolean;
 
   constructor(
