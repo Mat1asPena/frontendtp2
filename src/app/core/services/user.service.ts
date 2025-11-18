@@ -2,17 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  // Asegúrate de que esta URL sea correcta para tu backend
-  private apiUrl = 'https://backendtp2-rho.vercel.app/api/users'; 
+  private apiUrl = 'https://backendtp2-rho.vercel.app/api/users'; // https://backendtp2-rho.vercel.app/api/users || http://localhost:3000/api/users
 
   constructor(private http: HttpClient) {}
 
-  // ESTE ES EL MÉTODO QUE TE FALTA
-  updateProfile(userId: string, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${userId}`, data);
+  updateProfile(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 }
