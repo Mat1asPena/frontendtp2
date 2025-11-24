@@ -5,10 +5,11 @@ import { tap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { AuthResponse } from '../models/auth.model';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = 'https://backendtp2-seven.vercel.app/api'; // https://backendtp2-seven.vercel.app/api || http://localhost:3000/api
+  private base = environment.apiUrl;
   private isBrowser: boolean;
 
   constructor(

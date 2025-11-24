@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Comentario {
     autor: string;
@@ -24,7 +25,7 @@ export interface Comentario {
     providedIn: 'root',
     })
     export class PostService {
-    private API_URL = 'https://backendtp2-seven.vercel.app/api/posts'; // https://backendtp2-seven.vercel.app/api/posts || http://localhost:3000/api/posts
+    private API_URL = `${environment.apiUrl}/posts`;
 
     constructor(private http: HttpClient) {}
 
