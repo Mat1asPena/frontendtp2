@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = 'https://backendtp2-seven.vercel.app'; // https://backendtp2-seven.vercel.app || http://localhost:3000/api
+  private base = 'https://backendtp2-seven.vercel.app/api'; // https://backendtp2-seven.vercel.app/api || http://localhost:3000/api
   private isBrowser: boolean;
 
   constructor(
@@ -24,10 +24,20 @@ export class AuthService {
   }
 
   login(identifier: { usernameOrEmail: string, password: string }): Observable<AuthResponse> {
+    console.log('🔑 Attempting login with:', identifier.usernameOrEmail);
     return this.http.post<AuthResponse>(`${this.base}/auth/login`, identifier).pipe(tap(res => {
-      if (res?.token && this.isBrowser) {
-        localStorage.setItem('token', res.token);
-        if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
+      console.log('✅ Login response:', res);
+      if (res?.token) {
+        if (typeof window !== 'undefined') {
+          console.log('💾 Saving token to localStorage');
+          localStorage.setItem('token', res.token);
+          if (res.user) {
+            localStorage.setItem('user', JSON.stringify(res.user));
+            console.log('💾 User saved:', res.user);
+          }
+        } else {
+          console.log('⚠️ SSR mode - not saving to localStorage');
+        }
       }
     }));
   }
@@ -40,11 +50,22 @@ export class AuthService {
   }
 
   isLogged(): boolean {
-    return this.isBrowser ? !!localStorage.getItem('token') : false;
+    if (typeof window === 'undefined') return false; // SSR - no hay localStorage
+    try {
+      const token = localStorage.getItem('token');
+      return !!token;
+    } catch {
+      return false;
+    }
   }
 
   getToken(): string | null {
-    return this.isBrowser ? localStorage.getItem('token') : null;
+    if (typeof window === 'undefined') return null; // SSR
+    try {
+      return localStorage.getItem('token');
+    } catch {
+      return null;
+    }
   }
 
   getUser(): User | null {

@@ -1,19 +1,27 @@
 <section class="profile-container">
-    <div class="profile-card">
-        <h2 class="profile-title">Mi perfil</h2>
+    @if (errorMessage) {
+        <div style="padding: 20px; background-color: #f8d7da; color: #721c24; border-radius: 5px; margin: 20px;">
+            <strong>⚠️ Error:</strong> {{ errorMessage }}
+        </div>
+    }
+    
+    @if (user) {
+        <div class="profile-card">
+            <h2 class="profile-title">Mi perfil</h2>
 
-        <div class="profile-info">
-            <img [src]="user?.imagenUrl || 'assets/default-avatar.png'" alt="avatar" class="profile-avatar" />
-            <div class="profile-details">
-                <h3 class="profile-name">{{ user?.nombre }} {{ user?.apellido }}</h3>
-                <p class="profile-username">@{{ user?.nombreUsuario }}</p>
-                <p class="profile-description">{{ user?.descripcion || 'Sin descripción' }}</p>
+            <div class="profile-info">
+                <img [src]="user?.imagenUrl || 'assets/default-avatar.png'" alt="avatar" class="profile-avatar" />
+                <div class="profile-details">
+                    <h3 class="profile-name">{{ user?.nombre }} {{ user?.apellido }}</h3>
+                    <p class="profile-username">@{{ user?.nombreUsuario }}</p>
+                    <p class="profile-description">{{ user?.descripcion || 'Sin descripción' }}</p>
+                </div>
+                <button class="edit-btn" (click)="mostrarModal = true">✏️ Editar</button>
             </div>
-            <button class="edit-btn" (click)="mostrarModal = true">✏️ Editar</button>
-        </div>
 
-        <h4 class="profile-subtitle">Últimas publicaciones</h4>
+            <h4 class="profile-subtitle">Últimas publicaciones</h4>
         </div>
+    }
 </section>
 
 <app-modal [show]="mostrarModal" title="Editar Perfil" (close)="mostrarModal = false" (confirm)="guardarCambios()">

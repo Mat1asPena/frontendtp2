@@ -18,21 +18,29 @@ export class Login {
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
-      identifier: ['', [Validators.required]], // puede ser usuario o email
-      password: ['', [Validators.required]]
+      identifier: ['testuser', [Validators.required]], // usuario de prueba
+      password: ['password123', [Validators.required]] // contraseña de prueba
     });
   }
 
   submit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    console.log('📝 Submitting login form');
+    if (this.form.invalid) { 
+      console.log('❌ Form invalid');
+      this.form.markAllAsTouched(); 
+      return; 
+    }
     this.loading = true;
     const payload = { usernameOrEmail: this.form.value.identifier, password: this.form.value.password };
+    console.log('📤 Sending payload:', payload);
     this.auth.login(payload).subscribe({
       next: (res) => {
+        console.log('✅ Login successful, navigating to publicaciones');
         this.loading = false;
         this.router.navigate(['/publicaciones']);
       },
       error: (err) => {
+        console.error('❌ Login error:', err);
         this.loading = false;
         this.errorMsg = err?.error?.message || 'Credenciales inválidas';
       }
