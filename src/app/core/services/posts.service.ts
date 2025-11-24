@@ -29,16 +29,17 @@ export interface Comentario {
     constructor(private http: HttpClient) {}
 
     // ✔ Obtener posts ordenados (fecha o likes)
-    getPosts(orderBy: string, limit: number): Observable<PostFront[]> {
+    getPosts(orderBy: string, limit: number, page: number = 1): Observable<PostFront[]> {
         let params = new HttpParams()
-        .set('orderBy', orderBy)
-        .set('limit', limit);
+            .set('orderBy', orderBy)
+            .set('limit', limit)
+            .set('page', page); // Agregar page
 
         return this.http.get<PostFront[]>(this.API_URL, { params });
     }
 
     // ✔ Crear post nuevo
-    createPost(data: any): Observable<PostFront> {
+    createPost(data: FormData): Observable<PostFront> {
         return this.http.post<PostFront>(this.API_URL, data);
     }
 

@@ -26,17 +26,17 @@ export class Register {
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
-      nombre: ['', [Validators.required]],
-      apellido: ['', [Validators.required]],
-      correo: ['', [Validators.required, Validators.email]],
-      nombreUsuario: ['', [Validators.required, Validators.minLength(4)]],
-      password: ['', [Validators.required, Validators.minLength(8),
-        Validators.pattern(/(?=.*[A-Z])(?=.*\d).+/) // al menos 1 mayúscula y 1 número
+      nombre: ['', [Validators.required], Validators.maxLength(100)],
+      apellido: ['', [Validators.required, Validators.maxLength(75)]],
+      correo: ['', [Validators.required, Validators.email, Validators.maxLength(70)]],
+      nombreUsuario: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100),
+        Validators.pattern(/(?=.*[A-Z])(?=.*\d).+/) 
       ]],
       confirmPassword: [''],
-      fechaNacimiento: ['', [Validators.required]],
-      descripcion: [''],
-      imagen: [null]
+      fechaNacimiento: ['', [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2}$/)]],
+      descripcion: ['', [Validators.maxLength(300)]] ,
+      imagen: [null, [Validators.required ]] // <-- Agregado Validators.required
     }, { validators: passwordValidator('password') });
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { PostService } from '../../core/services/posts.service';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { DatePipe, isPlatformBrowser } from '@angular/common';
 import { Post } from '../../shared/components/post/post';
 
@@ -34,9 +34,11 @@ export class Publicaciones implements OnInit {
   posts: PostStub[] = [];
   orderBy: 'fecha' | 'likes' = 'fecha';
   limit = 5;
+  page = 1; // Nueva variable para controlar la página actual
   private isBrowser: boolean;
   newPostForm!: FormGroup;
   commentText: { [key: string]: string } = {};
+  postImagePreview: string | ArrayBuffer | null = null; // Variable para preview en el formulario de post
 
   constructor(
     public auth: AuthService,
@@ -49,9 +51,9 @@ export class Publicaciones implements OnInit {
 
   ngOnInit() {
     this.newPostForm = this.fb.group({
-      titulo: [''],
-      mensaje: [''],
-      imagen: [null],
+      titulo: ['', [Validators.required]],
+      mensaje: ['', [Validators.required]],
+      imagen: [null,[Validators.required]],
     });
 
     if (this.isBrowser) {
@@ -63,10 +65,27 @@ export class Publicaciones implements OnInit {
   // ================================
   loadPostsFromBackend() {
     this.postService
-      .getPosts(this.orderBy, this.limit)
-      .subscribe((posts: PostStub[]) => {
-        this.posts = posts;
+      .getPosts(this.orderBy, this.limit, this.page) // Enviamos la página actual
+      .subscribe((newPosts: PostStub[]) => {
+        if (this.page === 1) {
+            this.posts = newPosts; // Si es la primera página, reemplazamos
+        } else {
+            this.posts = [...this.posts, ...newPosts]; // Si es "Cargar más", añadimos
+        }
       });
+  }
+
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.newPostForm.patchValue({ imagen: file });
+      
+      // Preview
+      const reader = new FileReader();
+      reader.onload = () => this.postImagePreview = reader.result;
+      reader.readAsDataURL(file);
+    }
   }
 
   // ================================
@@ -74,34 +93,32 @@ export class Publicaciones implements OnInit {
   // ================================
   createPost() {
     if (!this.isBrowser) return;
+    if (this.newPostForm.invalid) {
+        this.newPostForm.markAllAsTouched();
+        return;
+    }
 
     const user = this.auth.getUser();
     if (!user) return;
 
-    const { titulo, mensaje, imagen } = this.newPostForm.value;
-    if (!titulo.trim() || !mensaje.trim()) return;
+    // Usamos FormData para enviar archivo + datos
+    const fd = new FormData();
+    fd.append('titulo', this.newPostForm.get('titulo')?.value);
+    fd.append('mensaje', this.newPostForm.get('mensaje')?.value);
+    // El autor lo pone el backend desde el token, pero si tu backend lo requiere en el body:
+    // fd.append('author', user.nombreUsuario); 
 
-    const sendPost = (imageUrl?: string) => {
-      this.postService
-        .createPost({
-          titulo,
-          mensaje,
-          imagenUrl: imageUrl,
-          author: user.nombreUsuario,
-        })
-        .subscribe(() => this.loadPostsFromBackend());
-    };
-
-    if (imagen) {
-      const file = imagen as File;
-      const reader = new FileReader();
-      reader.onload = () => sendPost(reader.result as string);
-      reader.readAsDataURL(file);
-    } else {
-      sendPost();
+    const file = this.newPostForm.get('imagen')?.value;
+    if (file instanceof File) {
+        fd.append('imagen', file);
     }
 
-    this.newPostForm.reset();
+    this.postService.createPost(fd).subscribe(() => {
+        this.page = 1; // Resetear a la primera página al crear post
+        this.loadPostsFromBackend();
+        this.newPostForm.reset();
+        this.postImagePreview = null; // Limpiar preview
+    });
   }
 
   // ================================
@@ -167,11 +184,13 @@ export class Publicaciones implements OnInit {
   // ================================
   changeOrder(o: 'fecha' | 'likes') {
     this.orderBy = o;
+    this.page = 1; // Resetear página al cambiar orden
+    this.posts = []; // Limpiar lista visualmente
     this.loadPostsFromBackend();
   }
 
   loadMore() {
-    this.limit += 5;
+    this.page++; // Aumentar página
     this.loadPostsFromBackend();
   }
 }

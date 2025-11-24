@@ -5,9 +5,26 @@
 
             <form [formGroup]="newPostForm" (ngSubmit)="createPost()" class="new-post-form">
                 <input formControlName="titulo" placeholder="Título" />
+                @if (newPostForm.get('titulo')?.touched && newPostForm.get('titulo')?.invalid) {
+                    <small style="color: red;">El título es requerido</small>
+                }
+
                 <textarea formControlName="mensaje" placeholder="¿Qué estás pensando?"></textarea>
-                <input type="file" (change)="newPostForm.patchValue({ imagen: $any($event.target).files[0] })" />
-                <button type="submit">Publicar</button>
+                @if (newPostForm.get('mensaje')?.touched && newPostForm.get('mensaje')?.invalid) {
+                    <small style="color: red;">El mensaje es requerido</small>
+                }
+
+                <input type="file" (change)="onFileChange($event)" accept="image/*" />
+                
+                @if (newPostForm.get('imagen')?.touched && newPostForm.get('imagen')?.invalid) {
+                    <small style="color: red;">La imagen es obligatoria</small>
+                }
+
+                @if (postImagePreview) {
+                    <img [src]="postImagePreview" style="max-width: 100px; margin-top: 10px; border-radius: 8px;">
+                }
+
+                <button type="submit" [disabled]="newPostForm.invalid">Publicar</button>
             </form>
 
             <div class="posts-filter">
