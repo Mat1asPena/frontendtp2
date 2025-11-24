@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PublicacionesService {
-  private apiUrl = 'https://backendtp2-rho.vercel.app/api'; // https://backendtp2-rho.vercel.app/api || http://localhost:3000/api
+  private apiUrl = 'https://backendtp2-seven.vercel.app/api'; // https://backendtp2-seven.vercel.app/api || http://localhost:3000/api
 
   constructor(private http: HttpClient) {}
 

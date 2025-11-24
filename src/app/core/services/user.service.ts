@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = 'https://backendtp2-rho.vercel.app/api/users'; // https://backendtp2-rho.vercel.app/api/users || http://localhost:3000/api/users
+  private apiUrl = 'https://backendtp2-seven.vercel.app/api/users'; // https://backendtp2-seven.vercel.app/api/users || http://localhost:3000/api/users
 
   constructor(private http: HttpClient) {}
 
