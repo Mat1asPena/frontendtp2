@@ -5,11 +5,10 @@ import { tap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { AuthResponse } from '../models/auth.model';
 import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = environment.apiUrl;
+  private base = 'http://localhost:3000/api';
   private isBrowser: boolean;
 
   constructor(
