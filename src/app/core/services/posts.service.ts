@@ -3,12 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Comentario {
+    _id?: string;          // Agregado (es opcional porque al crear uno nuevo no lo tienes aún)
     autor: string;
     texto: string;
     fecha: string;
-    }
+    modificado?: boolean;  // Agregado
+}
 
-    export interface PostFront {
+export interface PostFront {
     _id: string;
     titulo: string;
     mensaje: string;
@@ -18,7 +20,7 @@ export interface Comentario {
     author: string;
     comentarios: Comentario[];
     likedBy: string[];
-    }
+}
 
     @Injectable({
     providedIn: 'root',
@@ -59,5 +61,10 @@ export interface Comentario {
     // ✔ Agregar comentario
     addComment(id: string, comment: any): Observable<PostFront> {
         return this.http.patch<PostFront>(`${this.API_URL}/${id}/comment`, comment);
+    }
+
+    // ✔ Editar comentario
+    updateComment(postId: string, commentId: string, texto: string): Observable<PostFront> {
+        return this.http.put<PostFront>(`${this.API_URL}/${postId}/comentarios/${commentId}`, { texto });
     }
 }
