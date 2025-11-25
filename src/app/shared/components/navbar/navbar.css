@@ -69,6 +69,7 @@
   color: var(--gris-texto);
   font-weight: 500;
   transition: color 0.3s ease;
+  cursor: pointer; /* Asegura que se vea como link */
 }
 
 .navbar-links a:hover,
@@ -96,7 +97,7 @@
 
 /* ===== MENÚ MÓVIL ===== */
 .navbar-mobile {
-  display: none;
+  display: none; /* Oculto por defecto en desktop también por si acaso */
   position: fixed;
   top: 65px;
   left: 0;
@@ -110,7 +111,6 @@
 }
 
 .navbar-mobile.open {
-  display: block;
   transform: translateY(0);
 }
 
@@ -129,6 +129,7 @@
   text-decoration: none;
   font-weight: 600;
   color: var(--verde-bosque);
+  cursor: pointer;
 }
 
 /* ===== RESPONSIVO ===== */
@@ -139,5 +140,15 @@
 
   .navbar-toggle {
     display: flex;
+  }
+  
+  /* El menú móvil solo debe ser visible (block) en pantallas pequeñas */
+  .navbar-mobile {
+      display: block; 
+  }
+  
+  /* Pero oculto visualmente con transform si no tiene la clase open */
+  .navbar-mobile:not(.open) {
+      transform: translateY(-150%); /* Aseguramos que se esconda bien arriba */
   }
 }

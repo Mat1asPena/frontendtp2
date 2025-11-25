@@ -5,25 +5,12 @@
 
             <form [formGroup]="newPostForm" (ngSubmit)="createPost()" class="new-post-form">
                 <input formControlName="titulo" placeholder="Título" />
-                @if (newPostForm.get('titulo')?.touched && newPostForm.get('titulo')?.invalid) {
-                    <small style="color: red;">El título es requerido</small>
-                }
-
                 <textarea formControlName="mensaje" placeholder="¿Qué estás pensando?"></textarea>
-                @if (newPostForm.get('mensaje')?.touched && newPostForm.get('mensaje')?.invalid) {
-                    <small style="color: red;">El mensaje es requerido</small>
-                }
-
                 <input type="file" (change)="onFileChange($event)" accept="image/*" />
                 
-                @if (newPostForm.get('imagen')?.touched && newPostForm.get('imagen')?.invalid) {
-                    <small style="color: red;">La imagen es obligatoria</small>
-                }
-
                 @if (postImagePreview) {
-                    <img [src]="postImagePreview" style="max-width: 100px; margin-top: 10px; border-radius: 8px;">
+                    <img [src]="postImagePreview" style="max-width: 100px; margin-top: 10px;">
                 }
-
                 <button type="submit" [disabled]="newPostForm.invalid">Publicar</button>
             </form>
 
@@ -38,75 +25,8 @@
         </header>
 
         <div class="posts-list">
-            @for (post of posts; track post._id) {
-                <article class="post-card">
-                    <h3>{{ post.titulo }}</h3>
-                    <p>{{ post.mensaje }}</p>
-
-                    @if (post.imagenUrl) {
-                        <img [src]="post.imagenUrl" class="post-image" alt="Imagen de publicación" />
-                    }
-
-                    <div class="post-meta">
-                        <span>{{ post.likes }} ♥</span>
-                        <span>{{ post.createdAt | date:'short' }}</span>
-                    </div>
-
-                    <div class="post-actions">
-                        <button (click)="toggleLike(post)">♥</button>
-
-                        @if (auth.getUser()?.nombreUsuario === post.author) {
-                            <button (click)="deletePost(post._id)">Eliminar</button>
-                        }
-                    </div>
-
-                    <!-- Comentarios -->
-                    <div class="post-comments">
-                        <h4>Comentarios</h4>
-
-                        <div class="comments-list">
-                            @for (c of post.showingComments; track c._id || c.fecha) {
-                                <div class="comment-item">
-                                    <p>
-                                        <strong>{{ c.autor }}</strong>
-                                        
-                                        @if (c.modificado) {
-                                            <span class="edited-badge">(editado)</span>
-                                        }
-                                    </p>
-
-                                    @if (!editingComment[c._id ?? '']) {
-                                        <p>{{ c.texto }}</p>
-                                        
-                                        @if (auth.getUser()?.nombreUsuario === c.autor) {
-                                            <button class="btn-link-edit" (click)="startEditingComment(c)">Editar</button>
-                                        }
-                                    } @else {
-                                        <div class="edit-comment-box">
-                                            <input [(ngModel)]="editingText[c._id ?? '']" class="edit-input">
-                                            <div class="edit-actions">
-                                                <button (click)="saveCommentEdit(post, c)" class="btn-save">Guardar</button>
-                                                <button (click)="cancelEditingComment(c._id)" class="btn-cancel">Cancelar</button>
-                                            </div>
-                                        </div>
-                                    }
-                                    <small>{{ c.fecha | date:'short' }}</small>
-                                </div>
-                            }
-                        </div>
-
-                        @if (post.hasMoreComments) {
-                            <button class="btn-load-more-comments" (click)="loadMoreComments(post)">
-                                Ver más comentarios
-                            </button>
-                        }
-
-                        <div class="new-comment-box">
-                            <input [(ngModel)]="commentText[post._id]" placeholder="Escribe un comentario..." />
-                            <button (click)="addComment(post)">Comentar</button>
-                        </div>
-                    </div>
-                </article>
+            @for (item of posts; track item._id) {
+                <app-post [post]="item"></app-post>
             }
         </div>
 
@@ -114,9 +34,7 @@
             @if (!isLoading && posts.length >= limit) {
                 <button (click)="loadMore()">Cargar más</button>
             }
-            @if (isLoading) {
-                <p>Cargando...</p>
-            }
+            @if (isLoading) { <p>Cargando...</p> }
         </div>
     </div>
 </section>

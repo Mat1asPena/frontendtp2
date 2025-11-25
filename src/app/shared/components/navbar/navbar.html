@@ -2,35 +2,39 @@
     <div class="navbar-overlay"></div>
 
     <div class="navbar-container">
-        <!-- Logo / Nombre -->
-        <a href="/" class="navbar-logo">
-        <img src="/favicon.ico" alt="EcoRed logo" class="navbar-icon" />
-        EcoRed
+        <a routerLink="/" class="navbar-logo">
+            <img src="favicon.ico" alt="EcoRed logo" class="navbar-icon" />
+            EcoRed
         </a>
 
-        <!-- Menú principal -->
         <ul class="navbar-links">
-        <li><a href="publicaciones">Publicaciones</a></li>
-        <li><a href="mi-perfil">Mi perfil</a></li>
-        <li><a href="register">Registro</a></li>
-        <li><a href="login">Iniciar sesión</a></li>
+            @if (auth.isLogged()) {
+                <li><a routerLink="/publicaciones" routerLinkActive="active">Publicaciones</a></li>
+                <li><a routerLink="/mi-perfil" routerLinkActive="active">Mi perfil</a></li>
+                <li><a style="cursor: pointer;" (click)="logout()">Cerrar Sesión</a></li>
+            } @else {
+                <li><a routerLink="/register" routerLinkActive="active">Registro</a></li>
+                <li><a routerLink="/login" routerLinkActive="active">Iniciar sesión</a></li>
+            }
         </ul>
 
-        <!-- Botón hamburguesa para mobile -->
         <button class="navbar-toggle" (click)="toggleMenu()">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
         </button>
     </div>
 
-    <!-- Menú desplegable en mobile -->
     <div class="navbar-mobile" [class.open]="menuAbierto">
         <ul>
-        <li><a href="publicaciones" (click)="toggleMenu()">Publicaciones</a></li>
-        <li><a href="mi-perfil" (click)="toggleMenu()">Mi perfil</a></li>
-        <li><a href="register" (click)="toggleMenu()">Registro</a></li>
-        <li><a href="login" (click)="toggleMenu()">Iniciar sesión</a></li>
+            @if (auth.isLogged()) {
+                <li><a routerLink="/publicaciones" (click)="toggleMenu()">Publicaciones</a></li>
+                <li><a routerLink="/mi-perfil" (click)="toggleMenu()">Mi perfil</a></li>
+                <li><a style="cursor: pointer;" (click)="logout()">Cerrar Sesión</a></li>
+            } @else {
+                <li><a routerLink="/register" (click)="toggleMenu()">Registro</a></li>
+                <li><a routerLink="/login" (click)="toggleMenu()">Iniciar sesión</a></li>
+            }
         </ul>
     </div>
 </nav>

@@ -1,25 +1,24 @@
 import { Component, OnInit, PLATFORM_ID, Inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
-import { PostService, PostFront as PostFront, Comentario } from '../../core/services/posts.service';
+import { PostService, PostFront } from '../../core/services/posts.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
-import { DatePipe, isPlatformBrowser } from '@angular/common';
-import { Post } from '../../shared/components/post/post';
+import { isPlatformBrowser } from '@angular/common';
+import { PostComponent } from '../../shared/components/post/post';
 
 interface PostUI extends PostFront {
     commentsPage?: number;
-    showingComments?: Comentario[]; // Comments currently visible
+    showingComments?: any[];
     hasMoreComments?: boolean;
 }
 
 @Component({
   selector: 'app-publicaciones',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, PostComponent],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class Publicaciones implements OnInit {
   posts: PostUI[] = []; 
   orderBy: 'fecha' | 'likes' = 'fecha';
@@ -27,10 +26,7 @@ export class Publicaciones implements OnInit {
   page = 1;
   private isBrowser: boolean;
   newPostForm!: FormGroup;
-  commentText: { [key: string]: string } = {};
   postImagePreview: string | ArrayBuffer | null = null;
-  editingComment: { [key: string]: boolean } = {};
-  editingText: { [key: string]: string } = {};
   isLoading = false;
 
   constructor(
@@ -47,12 +43,10 @@ export class Publicaciones implements OnInit {
     this.newPostForm = this.fb.group({
       titulo: ['', [Validators.required]],
       mensaje: ['', [Validators.required]],
-      imagen: [null], // Imagen opcional según requerimiento, o required si prefieres
+      imagen: [null],
     });
 
     if (this.isBrowser) {
-      this.page = 1;
-      this.posts = [];
       this.loadPostsFromBackend();
     }
   }
@@ -60,32 +54,44 @@ export class Publicaciones implements OnInit {
   //   GET POSTS FROM BACKEND
   // ================================
   private mapPosts(posts: PostFront[]): PostUI[] {
-    return posts.map(p => ({
-        ...p,
-        commentsPage: 1,
-        // Initially show only first 2 comments (or whatever came from backend)
-        showingComments: p.comentarios.slice(0, 2), 
-        // Determine if there are more locally or assume true to verify with backend
-        hasMoreComments: p.comentarios.length > 2 
-    }));
+    return posts.map(p => {
+        // BLINDAJE: Asegurar que comentarios exista, si no, usar array vacío
+        const comentariosSeguros = p.comentarios || []; 
+
+        return {
+            ...p,
+            comentarios: comentariosSeguros, // Guardamos el array seguro
+            commentsPage: 1,
+            showingComments: comentariosSeguros.slice(0, 2), // Ahora slice nunca fallará
+            hasMoreComments: comentariosSeguros.length > 2 
+        };
+    });
   }
 
   loadPostsFromBackend() {
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.postService.getPosts(this.orderBy, this.limit, this.page).subscribe((newPosts) => {
-      const mappedPosts = this.mapPosts(newPosts);
-      if (this.page === 1) {
-        this.posts = mappedPosts;
-      } else {
-        this.posts = [...this.posts, ...mappedPosts];
+    
+    this.postService.getPosts(this.orderBy, this.limit, this.page).subscribe({ // Usar sintaxis de objeto para mejor manejo de error
+      next: (newPosts) => {
+        try {
+            const mappedPosts = this.mapPosts(newPosts);
+            if (this.page === 1) {
+                this.posts = mappedPosts;
+            } else {
+                this.posts = [...this.posts, ...mappedPosts];
+            }
+        } catch (e) {
+            console.error('Error procesando posts:', e);
+        }
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error loading posts:', error);
+        this.isLoading = false;
+        this.cdr.markForCheck();
       }
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    }, (error) => {
-      console.error('Error loading posts:', error);
-      this.isLoading = false;
-      this.cdr.markForCheck();
     });
   }
 
@@ -161,77 +167,6 @@ export class Publicaciones implements OnInit {
     this.postService.deletePost(postId).subscribe(() => {
       this.posts = this.posts.filter(p => p._id !== postId);
       this.cdr.markForCheck();
-    });
-  }
-
-  addComment(post: PostUI) {
-    const user = this.auth.getUser();
-    if (!user) return;
-
-    const text = this.commentText[post._id]?.trim();
-    if (!text) return;
-
-    const nuevoComentario = {
-      autor: user.nombreUsuario,
-      texto: text,
-      fecha: new Date().toISOString(),
-    };
-
-    this.postService.addComment(post._id, nuevoComentario).subscribe({
-      next: (updatedPost) => {
-        // 1. Actualizamos la fuente de verdad (todos los comentarios)
-        post.comentarios = updatedPost.comentarios;
-
-        // 2. Obtenemos el comentario real guardado (el último del array devuelto)
-        // Esto asegura que tengamos el _id correcto generado por Mongo
-        const comentarioReal = updatedPost.comentarios[updatedPost.comentarios.length - 1];
-
-        // 3. Lo agregamos a la lista VISIBLE para que aparezca abajo
-        if (!post.showingComments) {
-          post.showingComments = [];
-        }
-        post.showingComments.push(comentarioReal);
-
-        // 4. Limpiamos el input
-        this.commentText[post._id] = '';
-        this.cdr.markForCheck();
-      },
-      error: (err) => console.error('Error al comentar:', err)
-    });
-  }
-
-  startEditingComment(comment: Comentario) {
-    if (!comment._id) return; 
-    this.editingComment[comment._id] = true;
-    this.editingText[comment._id] = comment.texto;
-  }
-
-  cancelEditingComment(commentId: string | undefined) {
-    if (!commentId) return;
-    this.editingComment[commentId] = false;
-    delete this.editingText[commentId];
-  }
-
-  saveCommentEdit(post: PostUI, comment: Comentario) {
-    if (!comment._id) return;
-    const newText = this.editingText[comment._id];
-    if (!newText || !newText.trim()) return;
-
-    this.postService.updateComment(post._id, comment._id, newText).subscribe({
-      next: (updatedPost) => {
-        if (updatedPost) {
-            const index = this.posts.findIndex(p => p._id === post._id);
-            if (index !== -1) {
-              this.posts[index] = updatedPost;
-            }
-        }
-        this.cancelEditingComment(comment._id);
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        console.error('Error editando comentario', err);
-        // Opcional: Mostrar mensaje al usuario
-      }
     });
   }
 

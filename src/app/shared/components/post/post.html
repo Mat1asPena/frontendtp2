@@ -1,21 +1,63 @@
-<div class="post-card">
-    <div class="post-header">
-        <img [src]="publicacion.usuario.foto" alt="Foto perfil" class="perfil-img">
-        <h3>{{ publicacion.usuario.nombreUsuario }}</h3>
-        <small>{{ publicacion.fecha | date:'short' }}</small>
-    </div>
+<article class="post-card">
+    <h3>{{ post.titulo }}</h3>
+    <p>{{ post.mensaje }}</p>
 
-    <p>{{ publicacion.texto }}</p>
+    @if (post.imagenUrl) {
+        <img [src]="post.imagenUrl" class="post-image" alt="Imagen de publicación" />
+    }
+
+    <div class="post-meta">
+        <span>{{ post.likes }} ♥</span>
+        <span>{{ post.createdAt | date:'short' }}</span>
+    </div>
 
     <div class="post-actions">
-        <button (click)="toggleLike()">
-            ❤️ {{ publicacion.likes.length }}
-        </button>
+        <button (click)="toggleLike()">♥</button>
 
-        @if (publicacion.usuario.id === usuarioActualId ) {
-            <button (click)="eliminarPost()">
-                🗑️ Eliminar
-            </button>
+        @if (auth.getUser()?.nombreUsuario === post.author) {
+            <button (click)="deletePost()">Eliminar</button>
         }
     </div>
-</div>
+
+    <div class="post-comments">
+        <h4>Comentarios</h4>
+
+        <div class="comments-list">
+            @for (c of post.showingComments; track c._id || c.fecha) {
+                <div class="comment-item">
+                    <p>
+                        <strong>{{ c.autor }}</strong>
+                        @if (c.modificado) { <span class="edited-badge">(editado)</span> }
+                    </p>
+
+                    @if (editingCommentId !== c._id) {
+                        <p>{{ c.texto }}</p>
+                        @if (auth.getUser()?.nombreUsuario === c.autor) {
+                            <button class="btn-link-edit" (click)="startEditing(c)">Editar</button>
+                        }
+                    } @else {
+                        <div class="edit-comment-box">
+                            <input [(ngModel)]="editingText" class="edit-input">
+                            <div class="edit-actions">
+                                <button (click)="saveComment(c)" class="btn-save">Guardar</button>
+                                <button (click)="cancelEditing()" class="btn-cancel">Cancelar</button>
+                            </div>
+                        </div>
+                    }
+                    <small>{{ c.fecha | date:'short' }}</small>
+                </div>
+            }
+        </div>
+
+        @if (post.hasMoreComments) {
+            <button class="btn-load-more-comments" (click)="loadMoreComments()">
+                Ver más comentarios
+            </button>
+        }
+
+        <div class="new-comment-box">
+            <input [(ngModel)]="commentText" placeholder="Escribe un comentario..." />
+            <button (click)="addComment()">Comentar</button>
+        </div>
+    </div>
+</article>
