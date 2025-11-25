@@ -5,3 +5,7 @@
 </main>
 
 <app-footer></app-footer>
+
+<app-modal [show]="showSessionModal" title="Sesión por expirar" (close)="logout()" (confirm)="refreshToken()">
+  <p>Tu sesión está por expirar en breve. ¿Deseas extenderla?</p>
+</app-modal>

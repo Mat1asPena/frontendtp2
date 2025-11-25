@@ -1,0 +1,23 @@
+.container {
+    padding: 20px; background: white; border-radius: 8px; margin-top: 20px; 
+}
+
+.users-table {
+    width: 100%; border-collapse: collapse; 
+}
+
+th, td {
+    padding: 10px; border-bottom: 1px solid #ddd; text-align: left; 
+}
+
+.badge-ok {
+    color: green; font-weight: bold; 
+}
+
+.badge-error {
+    color: red; font-weight: bold; 
+}
+
+button {
+    padding: 5px 10px; font-size: 0.8rem; 
+}

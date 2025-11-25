@@ -1,0 +1,37 @@
+<section class="container">
+        <h2>Gestión de Usuarios</h2>
+        @if (error) { <p class="error">{{error}}</p> }
+        
+        <table class="users-table">
+            <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for (u of users; track u._id) {
+                <tr>
+                <td>{{u.nombreUsuario}}</td>
+                <td>{{u.correo}}</td>
+                <td>{{u.perfil}}</td>
+                <td>
+                    <span [class]="u.habilitado ? 'badge-ok' : 'badge-error'">
+                        {{u.habilitado ? 'Activo' : 'Inactivo'}}
+                    </span>
+                </td>
+                <td>
+                    @if (u.habilitado) {
+                        <button (click)="toggleUser(u._id, false)">Deshabilitar</button>
+                    } @else {
+                        <button (click)="toggleUser(u._id, true)">Habilitar</button>
+                    }
+                </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </section>

@@ -11,4 +11,16 @@ export class UserService {
   updateProfile(id: string, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
+
+  getAll(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
+  disableUser(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  enableUser(id: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/restore`, {});
+  }
 }

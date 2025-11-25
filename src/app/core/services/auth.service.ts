@@ -79,5 +79,11 @@ export class AuthService {
       localStorage.setItem('user', JSON.stringify(user));
     }
   }
+
+  refreshToken(): Observable<any> {
+    return this.http.post(`${this.base}/auth/refresh`, {}).pipe(tap((res: any) => {
+        if (res.token) localStorage.setItem('token', res.token);
+    }));
+  }
 }
 
