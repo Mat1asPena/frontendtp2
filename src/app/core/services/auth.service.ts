@@ -25,9 +25,9 @@ export class AuthService {
   }
 
   login(identifier: { usernameOrEmail: string, password: string }): Observable<AuthResponse> {
-    console.log('🔑 Attempting login with:', identifier.usernameOrEmail);
+    console.log('Attempting login with:', identifier.usernameOrEmail);
     return this.http.post<AuthResponse>(`${this.base}/auth/login`, identifier).pipe(tap(res => {
-      console.log('✅ Login response:', res);
+      console.log('Login response:', res);
       if (res?.token) {
         if (typeof window !== 'undefined') {
           console.log('💾 Saving token to localStorage');
@@ -37,7 +37,7 @@ export class AuthService {
             console.log('💾 User saved:', res.user);
           }
         } else {
-          console.log('⚠️ SSR mode - not saving to localStorage');
+          console.log(' SSR mode - not saving to localStorage');
         }
       }
     }));
@@ -108,7 +108,7 @@ export class AuthService {
         console.log('✅ Token validation successful');
         return true;
       }),
-      catchError((error) => {
+      catchError((error) => { // 401 Unauthorized
         console.error('❌ Token validation failed:', error.message);
         this.logout();
         return of(false);

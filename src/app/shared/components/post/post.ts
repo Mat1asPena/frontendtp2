@@ -18,6 +18,7 @@ interface PostUI extends PostFront {
   templateUrl: './post.html',
   styleUrls: ['./post.css'] 
 })
+
 export class PostComponent implements OnInit {
   @Input() post!: PostUI; // Recibimos el post del padre
   @Output() deletePostClicked = new EventEmitter<string>();
@@ -50,7 +51,7 @@ export class PostComponent implements OnInit {
   }
 
   addComment() {
-    if (!this.commentText.trim()) return;
+    if (!this.commentText.trim()) return; // No agregar comentarios vacíos
     const nuevo = { autor: this.auth.getUser()?.nombreUsuario, texto: this.commentText, fecha: new Date().toISOString() };
 
     this.postService.addComment(this.post._id, nuevo).subscribe(updated => {
@@ -88,7 +89,7 @@ export class PostComponent implements OnInit {
   }
 
   saveComment(c: Comentario) {
-    if (!c._id || !this.editingText.trim()) return;
+    if (!c._id || !this.editingText.trim()) return; // No guardar si está vacío
     this.postService.updateComment(this.post._id, c._id, this.editingText).subscribe(updated => {
         // Buscar y actualizar en la lista local
         const index = this.post.showingComments?.findIndex(x => x._id === c._id);
