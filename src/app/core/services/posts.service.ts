@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 
 export interface Comentario {
-    _id?: string;          // Agregado (es opcional porque al crear uno nuevo no lo tienes aún)
+    _id?: string;         
     autor: string;
     texto: string;
     fecha: string;
-    modificado?: boolean;  // Agregado
+    modificado?: boolean; 
 }
 
 export interface PostFront {
@@ -32,7 +32,7 @@ export interface PostFront {
 
     constructor(private http: HttpClient) {}
 
-    // ✔ Obtener posts ordenados (fecha o likes)
+    //  Obtener posts ordenados (fecha o likes)
     getPosts(orderBy: string, limit: number, page: number = 1, author?: string): Observable<PostFront[]> {
         let params = new HttpParams()
             .set('orderBy', orderBy)
@@ -47,32 +47,32 @@ export interface PostFront {
         );
     }
 
-    // ✔ Crear post nuevo
+    //  Crear post nuevo
     createPost(data: FormData): Observable<PostFront> {
         return this.http.post<PostFront>(this.API_URL, data);
     }
 
-    // ✔ Like / Unlike
+    //  Like / Unlike
     toggleLike(id: string, username: string): Observable<PostFront> {
         return this.http.patch<PostFront>(`${this.API_URL}/${id}/like`, { username });
     }
 
-    // ✔ Borrar post
+    //  Borrar post
     deletePost(id: string): Observable<any> {
         return this.http.delete(`${this.API_URL}/${id}`);
     }
 
-    // ✔ Agregar comentario
+    //  Agregar comentario
     addComment(id: string, comment: any): Observable<PostFront> {
         return this.http.post<PostFront>(`${this.API_URL}/${id}/comentarios`, comment);
     }
 
-    // ✔ Editar comentario
+    //  Editar comentario
     updateComment(postId: string, commentId: string, texto: string): Observable<PostFront> {
         return this.http.put<PostFront>(`${this.API_URL}/${postId}/comentarios/${commentId}`, { texto });
     }
 
-    // ✔ Get comments paginated
+    //  Get comments paginated
     getComments(postId: string, page: number, limit: number): Observable<Comentario[]> {
         const params = new HttpParams()
             .set('page', page)
