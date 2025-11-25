@@ -29,12 +29,15 @@ export interface Comentario {
     constructor(private http: HttpClient) {}
 
     // ✔ Obtener posts ordenados (fecha o likes)
-    getPosts(orderBy: string, limit: number, page: number = 1): Observable<PostFront[]> {
+    getPosts(orderBy: string, limit: number, page: number = 1, author?: string): Observable<PostFront[]> {
         let params = new HttpParams()
             .set('orderBy', orderBy)
             .set('limit', limit)
             .set('page', page); // Agregar page
 
+        if (author) {
+            params = params.set(author, 'author');
+        }
         return this.http.get<PostFront[]>(this.API_URL, { params });
     }
 
