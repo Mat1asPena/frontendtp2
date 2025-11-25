@@ -21,12 +21,8 @@ export class App implements OnInit {
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
   ngZone = inject(NgZone);
-
-  // --- VARIABLES NUEVAS ---
-  isLoading = true; // Empieza en true para mostrar el spinner al inicio
+  isLoading = true;
   isBrowser: boolean;
-
-  // --- VARIABLES EXISTENTES ---
   showSessionModal = false;
   sessionTimer: any;
 
@@ -45,27 +41,26 @@ export class App implements OnInit {
   // --- LÓGICA DE ARRANQUE ---
   async initializeApp() {
     try {
-      console.log('🚀 Iniciando validación de token...');
+      console.log('Iniciando validación de token...');
       // Timeout de seguridad de 2 segundos
       const validationPromise = this.auth.validateToken().toPromise();
       const timeoutPromise = new Promise<boolean>(resolve => 
         setTimeout(() => {
-          console.warn('⏱️ Timeout en validación');
+          console.warn('Timeout en validación');
           resolve(false);
         }, 2000)
       );
 
       const isValid = await Promise.race([validationPromise, timeoutPromise]);
-      console.log('📊 Resultado de validación:', isValid);
+      console.log('Resultado de validación:', isValid);
       
-      // Solo actualizar isLoading - dejar que los Guards manejen la navegación
       this.ngZone.run(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        console.log('✅ Spinner desactivado - Guards manejarán la navegación');
+        console.log('Spinner desactivado - Guards manejarán la navegación');
       });
     } catch (error) {
-      console.error('💥 Error en inicialización:', error);
+      console.error('Error en inicialización:', error);
       this.ngZone.run(() => {
         this.isLoading = false;
         this.cdr.markForCheck();

@@ -45,14 +45,14 @@ export class PostComponent implements OnInit {
   }
 
   deletePost() {
-    // Emitir evento al padre que manejará la lógica con modal
+    // Emitir evento al padre que maneja la logica con modal
     this.deletePostClicked.emit(this.post._id);
   }
 
   addComment() {
     if (!this.commentText.trim()) return;
     const nuevo = { autor: this.auth.getUser()?.nombreUsuario, texto: this.commentText, fecha: new Date().toISOString() };
-    
+
     this.postService.addComment(this.post._id, nuevo).subscribe(updated => {
       this.post.comentarios = updated.comentarios;
       // Agregar al final de la lista visible
