@@ -1,0 +1,20 @@
+<section class="detalle-page">
+    <button class="btn-back" (click)="goBack()">← Volver al Feed</button>
+
+    @if (loading) {
+        <div class="loading-state">Cargando publicación...</div>
+    }
+
+    @if (error) {
+        <div class="error-state">
+            <p>{{ error }}</p>
+            <button (click)="goBack()">Regresar</button>
+        </div>
+    }
+
+    @if (post) {
+        <div class="detalle-container">
+            <app-post [post]="post"></app-post>
+        </div>
+    }
+</section>

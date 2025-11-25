@@ -7,5 +7,6 @@ export const routes: Routes = [
     { path: 'publicaciones', loadComponent: () => import('./pages/publicaciones/publicaciones').then(m => m.Publicaciones), canActivate: [AuthGuard]},
     { path: 'mi-perfil', loadComponent: () => import('./pages/mi-perfil/mi-perfil').then(m => m.MiPerfil), canActivate: [AuthGuard] },
     { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) },
+    { path: 'post/:id', loadComponent: () => import('./pages/detalle-post/detalle-post').then(m => m.DetallePost) },
     { path: '**', redirectTo: 'publicaciones'}
 ];

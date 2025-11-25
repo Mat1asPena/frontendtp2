@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { PostService, PostFront, Comentario } from '../../../core/services/posts.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -13,7 +14,7 @@ interface PostUI extends PostFront {
 @Component({
   selector: 'app-post',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './post.html',
   styleUrls: ['./post.css'] 
 })

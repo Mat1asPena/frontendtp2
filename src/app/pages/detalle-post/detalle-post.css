@@ -1,0 +1,39 @@
+.detalle-page {
+    padding: 20px;
+    background-color: #f4f7f6;
+    min-height: 100vh;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: var(--verde-bosque, #2e5939);
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
+.detalle-container {
+    /* Hacemos el contenedor más ancho que en el feed (800px vs 700px habituales) */
+    max-width: 900px; 
+    margin: 0 auto;
+}
+
+/* Opcional: Hacer la imagen más imponente en la vista de detalle */
+/* Esto aplica estilos profundos al componente hijo */
+::ng-deep .detalle-container app-post .post-image {
+    max-height: 600px !important; /* Permitimos que la imagen sea más alta */
+}
+
+.loading-state, .error-state {
+    text-align: center;
+    margin-top: 50px;
+    color: #666;
+}

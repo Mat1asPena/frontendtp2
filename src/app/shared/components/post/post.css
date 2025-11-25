@@ -242,3 +242,13 @@
 .post-card h3 {
     margin-top: 5px; 
 }
+
+.link-detalle {
+    text-decoration: none;
+    color: #999;
+    cursor: pointer;
+}
+.link-detalle:hover {
+    text-decoration: underline;
+    color: var(--verde-bosque);
+}

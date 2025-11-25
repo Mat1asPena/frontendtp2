@@ -70,4 +70,11 @@
             <button (click)="addComment()">Comentar</button>
         </div>
     </div>
+
+    <div class="author-info">
+        <span class="author-name">@{{ post.author }}</span>
+        <a [routerLink]="['/post', post._id]" class="post-date-mini link-detalle">
+            {{ post.createdAt | date:'mediumDate' }} (Ver detalle)
+        </a>
+    </div>
 </article>

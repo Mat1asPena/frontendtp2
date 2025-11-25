@@ -79,4 +79,8 @@ export interface PostFront {
             .set('limit', limit);
         return this.http.get<Comentario[]>(`${this.API_URL}/${postId}/comentarios`, { params });
     }
+
+    getPostById(id: string): Observable<PostFront> {
+        return this.http.get<PostFront>(`${this.API_URL}/${id}`);
+    }
 }
