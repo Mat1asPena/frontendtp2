@@ -1,10 +1,11 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, timeout } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { AuthResponse } from '../models/auth.model';
 import { isPlatformBrowser } from '@angular/common';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
@@ -84,6 +85,35 @@ export class AuthService {
     return this.http.post(`${this.base}/auth/refresh`, {}).pipe(tap((res: any) => {
         if (res.token) localStorage.setItem('token', res.token);
     }));
+  }
+
+  validateToken(): Observable<boolean> {
+    if (!this.isBrowser) {
+      console.log('SSR mode');
+      return of(true);
+    }
+    
+    const token = this.getToken();
+    if (!token) {
+      console.log('❌ No token found - returning false');
+      return of(false).pipe(
+        tap(() => console.log('Observable completed: no token'))
+      );
+    }
+
+    console.log('🔍 Validating token...');
+    return this.http.post(`${this.base}/auth/authorize`, {}).pipe(
+      timeout(4000),
+      map(() => {
+        console.log('✅ Token validation successful');
+        return true;
+      }),
+      catchError((error) => {
+        console.error('❌ Token validation failed:', error.message);
+        this.logout();
+        return of(false);
+      })
+    );
   }
 }
 
