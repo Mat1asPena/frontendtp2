@@ -60,7 +60,7 @@ export interface PostFront {
 
     // ✔ Agregar comentario
     addComment(id: string, comment: any): Observable<PostFront> {
-        return this.http.patch<PostFront>(`${this.API_URL}/${id}/comment`, comment);
+        return this.http.post<PostFront>(`${this.API_URL}/${id}/comentarios`, comment);
     }
 
     // ✔ Editar comentario

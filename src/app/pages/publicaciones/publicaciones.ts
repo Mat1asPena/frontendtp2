@@ -162,19 +162,21 @@ export class Publicaciones implements OnInit {
   saveCommentEdit(post: PostFront, comment: Comentario) {
     if (!comment._id) return;
     const newText = this.editingText[comment._id];
-    if (!newText || newText.trim() === '') return;
+    if (!newText || !newText.trim()) return;
 
     this.postService.updateComment(post._id, comment._id, newText).subscribe({
       next: (updatedPost) => {
-        const index = this.posts.findIndex(p => p._id === post._id);
-        if (index !== -1) {
-          this.posts[index] = updatedPost;
+        if (updatedPost) {
+            const index = this.posts.findIndex(p => p._id === post._id);
+            if (index !== -1) {
+              this.posts[index] = updatedPost;
+            }
         }
         this.cancelEditingComment(comment._id);
       },
       error: (err) => {
         console.error('Error editando comentario', err);
-        alert('No se pudo editar el comentario');
+        // Opcional: Mostrar mensaje al usuario
       }
     });
   }
