@@ -67,4 +67,12 @@ export interface PostFront {
     updateComment(postId: string, commentId: string, texto: string): Observable<PostFront> {
         return this.http.put<PostFront>(`${this.API_URL}/${postId}/comentarios/${commentId}`, { texto });
     }
+
+    // ✔ Get comments paginated
+    getComments(postId: string, page: number, limit: number): Observable<Comentario[]> {
+        const params = new HttpParams()
+            .set('page', page)
+            .set('limit', limit);
+        return this.http.get<Comentario[]>(`${this.API_URL}/${postId}/comentarios`, { params });
+    }
 }

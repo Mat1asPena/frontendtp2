@@ -1,9 +1,15 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
-import { PostService, PostFront, Comentario } from '../../core/services/posts.service';
+import { PostService, PostFront as PostFront, Comentario } from '../../core/services/posts.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { DatePipe, isPlatformBrowser } from '@angular/common';
 import { Post } from '../../shared/components/post/post';
+
+interface PostUI extends PostFront {
+    commentsPage?: number;
+    showingComments?: Comentario[]; // Comments currently visible
+    hasMoreComments?: boolean;
+}
 
 @Component({
   selector: 'app-publicaciones',
@@ -14,7 +20,7 @@ import { Post } from '../../shared/components/post/post';
 })
 
 export class Publicaciones implements OnInit {
-  posts: PostFront[] = []; 
+  posts: PostUI[] = []; 
   orderBy: 'fecha' | 'likes' = 'fecha';
   limit = 5;
   page = 1;
@@ -48,16 +54,26 @@ export class Publicaciones implements OnInit {
   // ================================
   //   GET POSTS FROM BACKEND
   // ================================
+  private mapPosts(posts: PostFront[]): PostUI[] {
+    return posts.map(p => ({
+        ...p,
+        commentsPage: 1,
+        // Initially show only first 2 comments (or whatever came from backend)
+        showingComments: p.comentarios.slice(0, 2), 
+        // Determine if there are more locally or assume true to verify with backend
+        hasMoreComments: p.comentarios.length > 2 
+    }));
+  }
+
   loadPostsFromBackend() {
-    this.postService
-      .getPosts(this.orderBy, this.limit, this.page)
-      .subscribe((newPosts: PostFront[]) => {
-        if (this.page === 1) {
-            this.posts = newPosts;
-        } else {
-            this.posts = [...this.posts, ...newPosts];
-        }
-      });
+    this.postService.getPosts(this.orderBy, this.limit, this.page).subscribe((newPosts) => {
+      const mappedPosts = this.mapPosts(newPosts);
+      if (this.page === 1) {
+        this.posts = mappedPosts;
+      } else {
+        this.posts = [...this.posts, ...mappedPosts];
+      }
+    });
   }
 
   onFileChange(event: Event) {
@@ -98,7 +114,7 @@ export class Publicaciones implements OnInit {
     });
   }
 
-  toggleLike(post: PostFront) {
+  toggleLike(post: PostUI) {
     const currentUser = this.auth.getUser()?.nombreUsuario;
     if (!currentUser) return;
 
@@ -128,23 +144,39 @@ export class Publicaciones implements OnInit {
     });
   }
 
-  addComment(post: PostFront) {
+  addComment(post: PostUI) {
     const user = this.auth.getUser();
     if (!user) return;
 
     const text = this.commentText[post._id]?.trim();
     if (!text) return;
 
-    this.postService
-      .addComment(post._id, {
-        autor: user.nombreUsuario,
-        texto: text,
-        fecha: new Date().toISOString(),
-      })
-      .subscribe(updated => {
-        post.comentarios = updated.comentarios;
+    const nuevoComentario = {
+      autor: user.nombreUsuario,
+      texto: text,
+      fecha: new Date().toISOString(),
+    };
+
+    this.postService.addComment(post._id, nuevoComentario).subscribe({
+      next: (updatedPost) => {
+        // 1. Actualizamos la fuente de verdad (todos los comentarios)
+        post.comentarios = updatedPost.comentarios;
+
+        // 2. Obtenemos el comentario real guardado (el último del array devuelto)
+        // Esto asegura que tengamos el _id correcto generado por Mongo
+        const comentarioReal = updatedPost.comentarios[updatedPost.comentarios.length - 1];
+
+        // 3. Lo agregamos a la lista VISIBLE para que aparezca abajo
+        if (!post.showingComments) {
+          post.showingComments = [];
+        }
+        post.showingComments.push(comentarioReal);
+
+        // 4. Limpiamos el input
         this.commentText[post._id] = '';
-      });
+      },
+      error: (err) => console.error('Error al comentar:', err)
+    });
   }
 
   startEditingComment(comment: Comentario) {
@@ -159,7 +191,7 @@ export class Publicaciones implements OnInit {
     delete this.editingText[commentId];
   }
 
-  saveCommentEdit(post: PostFront, comment: Comentario) {
+  saveCommentEdit(post: PostUI, comment: Comentario) {
     if (!comment._id) return;
     const newText = this.editingText[comment._id];
     if (!newText || !newText.trim()) return;
@@ -191,5 +223,24 @@ export class Publicaciones implements OnInit {
   loadMore() {
     this.page++;
     this.loadPostsFromBackend();
+  }
+
+  loadMoreComments(post: PostUI) {
+    const nextPage = (post.commentsPage || 1) + 1;
+    const limit = 5;
+    this.postService.getComments(post._id, nextPage, limit).subscribe({
+        next: (newComments) => {
+            if (newComments.length > 0) {
+                post.showingComments = [...(post.showingComments || []), ...newComments];
+                post.commentsPage = nextPage;
+                if (newComments.length < limit) {
+                    post.hasMoreComments = false;
+                }
+            } else {
+                post.hasMoreComments = false;
+            }
+        },
+        error: (err) => console.error('Error loading comments', err)
+    });
   }
 }

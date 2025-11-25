@@ -65,7 +65,7 @@
                         <h4>Comentarios</h4>
 
                         <div class="comments-list">
-                            @for (c of post.comentarios; track c._id || c.fecha) {
+                            @for (c of post.showingComments; track c._id || c.fecha) {
                                 <div class="comment-item">
                                     <p>
                                         <strong>{{ c.autor }}</strong>
@@ -81,9 +81,7 @@
                                         @if (auth.getUser()?.nombreUsuario === c.autor) {
                                             <button class="btn-link-edit" (click)="startEditingComment(c)">Editar</button>
                                         }
-                                    } 
-                                    
-                                    @else {
+                                    } @else {
                                         <div class="edit-comment-box">
                                             <input [(ngModel)]="editingText[c._id ?? '']" class="edit-input">
                                             <div class="edit-actions">
@@ -92,11 +90,16 @@
                                             </div>
                                         </div>
                                     }
-                                    
                                     <small>{{ c.fecha | date:'short' }}</small>
                                 </div>
                             }
                         </div>
+
+                        @if (post.hasMoreComments) {
+                            <button class="btn-load-more-comments" (click)="loadMoreComments(post)">
+                                Ver más comentarios
+                            </button>
+                        }
 
                         <div class="new-comment-box">
                             <input [(ngModel)]="commentText[post._id]" placeholder="Escribe un comentario..." />

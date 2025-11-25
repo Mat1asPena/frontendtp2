@@ -389,6 +389,21 @@ h1, h2, h3, h4, h5, h6, p {
     padding: 4px 8px;
 }
 
+.btn-load-more-comments {
+    background: none;
+    border: none;
+    color: var(--verde-bosque);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 5px;
+    text-decoration: underline;
+}
+.btn-load-more-comments:hover {
+    color: var(--verde-oliva);
+}
+
 /* --- Animaciones --- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
