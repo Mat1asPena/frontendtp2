@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { timeout } from 'rxjs/operators';
 
 export interface Comentario {
     _id?: string;          // Agregado (es opcional porque al crear uno nuevo no lo tienes aún)
@@ -39,9 +40,11 @@ export interface PostFront {
             .set('page', page); // Agregar page
 
         if (author) {
-            params = params.set(author, 'author');
+            params = params.set('author', author);
         }
-        return this.http.get<PostFront[]>(this.API_URL, { params });
+        return this.http.get<PostFront[]>(this.API_URL, { params }).pipe(
+            timeout(10000) // Timeout de 10 segundos
+        );
     }
 
     // ✔ Crear post nuevo

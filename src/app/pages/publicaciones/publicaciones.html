@@ -26,7 +26,7 @@
 
         <div class="posts-list">
             @for (item of posts; track item._id) {
-                <app-post [post]="item"></app-post>
+                <app-post [post]="item" (deletePostClicked)="deletePost($event)"></app-post>
             }
         </div>
 
@@ -38,3 +38,7 @@
         </div>
     </div>
 </section>
+
+<app-modal [show]="showDeleteModal" title="Confirmar eliminación" (close)="cancelDelete()" (confirm)="confirmDelete()">
+    <p>{{ deleteModalMessage }}</p>
+</app-modal>

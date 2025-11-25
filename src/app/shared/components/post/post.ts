@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostService, PostFront, Comentario } from '../../../core/services/posts.service';
@@ -15,29 +15,26 @@ interface PostUI extends PostFront {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './post.html',
-  styleUrls: ['./post.css'] // Asegúrate de mover los estilos aquí
+  styleUrls: ['./post.css'] 
 })
 export class PostComponent implements OnInit {
   @Input() post!: PostUI; // Recibimos el post del padre
+  @Output() deletePostClicked = new EventEmitter<string>();
   
   auth = inject(AuthService);
   private postService = inject(PostService);
 
-  // Variables locales (ya no necesitamos diccionarios por ID)
   commentText: string = '';
   editingCommentId: string | null = null;
   editingText: string = '';
 
   ngOnInit() {
-    // Inicializar estado de comentarios si no viene listo
     if (!this.post.showingComments) {
       this.post.showingComments = this.post.comentarios.slice(0, 2);
       this.post.hasMoreComments = this.post.comentarios.length > 2;
       this.post.commentsPage = 1;
     }
   }
-
-  // --- LÓGICA MOVIDA DESDE PUBLICACIONES.TS ---
 
   toggleLike() {
     this.postService.toggleLike(this.post._id, this.post.author).subscribe(updated => {
@@ -47,14 +44,8 @@ export class PostComponent implements OnInit {
   }
 
   deletePost() {
-    // Aquí quizás prefieras emitir un evento al padre para que lo saque de la lista principal
-    // O llamar al servicio y luego emitir. Por simplicidad:
-    if(confirm('¿Borrar publicación?')) {
-        this.postService.deletePost(this.post._id).subscribe(() => {
-            // Emitir evento de eliminado (Output) sería lo ideal
-            window.location.reload(); // Solución rápida temporal
-        });
-    }
+    // Emitir evento al padre que manejará la lógica con modal
+    this.deletePostClicked.emit(this.post._id);
   }
 
   addComment() {

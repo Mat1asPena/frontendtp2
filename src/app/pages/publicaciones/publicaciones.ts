@@ -4,6 +4,7 @@ import { PostService, PostFront } from '../../core/services/posts.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { PostComponent } from '../../shared/components/post/post';
+import { Modal } from '../../shared/components/modal/modal';
 
 interface PostUI extends PostFront {
     commentsPage?: number;
@@ -14,7 +15,7 @@ interface PostUI extends PostFront {
 @Component({
   selector: 'app-publicaciones',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, PostComponent],
+  imports: [ReactiveFormsModule, FormsModule, PostComponent, Modal],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,11 @@ export class Publicaciones implements OnInit {
   newPostForm!: FormGroup;
   postImagePreview: string | ArrayBuffer | null = null;
   isLoading = false;
+
+  // --- PROPIEDADES DEL MODAL ---
+  showDeleteModal = false;
+  deleteModalMessage = '';
+  pendingDeletePostId: string | null = null;
 
   constructor(
     public auth: AuthService,
@@ -50,9 +56,8 @@ export class Publicaciones implements OnInit {
       this.loadPostsFromBackend();
     }
   }
-  // ================================
+
   //   GET POSTS FROM BACKEND
-  // ================================
   private mapPosts(posts: PostFront[]): PostUI[] {
     return posts.map(p => {
         // BLINDAJE: Asegurar que comentarios exista, si no, usar array vacío
@@ -72,8 +77,11 @@ export class Publicaciones implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
     
+    console.log('📥 Iniciando carga de posts - página:', this.page, 'orderBy:', this.orderBy);
+    
     this.postService.getPosts(this.orderBy, this.limit, this.page).subscribe({ // Usar sintaxis de objeto para mejor manejo de error
       next: (newPosts) => {
+        console.log('✅ Posts recibidos del backend:', newPosts?.length || 0, 'posts');
         try {
             const mappedPosts = this.mapPosts(newPosts);
             if (this.page === 1) {
@@ -81,6 +89,7 @@ export class Publicaciones implements OnInit {
             } else {
                 this.posts = [...this.posts, ...mappedPosts];
             }
+            console.log('📊 Total de posts en componente:', this.posts.length);
         } catch (e) {
             console.error('Error procesando posts:', e);
         }
@@ -88,7 +97,7 @@ export class Publicaciones implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        console.error('Error loading posts:', error);
+        console.error('❌ Error loading posts:', error);
         this.isLoading = false;
         this.cdr.markForCheck();
       }
@@ -160,14 +169,44 @@ export class Publicaciones implements OnInit {
     const isAdmin = currentUser.rol === 'administrador';
 
     if (!isOwner && !isAdmin) {
-      alert('Solo el autor o un administrador pueden eliminar esta publicación.');
+      this.deleteModalMessage = 'Solo el autor o un administrador pueden eliminar esta publicación.';
+      this.showDeleteModal = true;
+      this.cdr.markForCheck();
       return;
     }
 
-    this.postService.deletePost(postId).subscribe(() => {
-      this.posts = this.posts.filter(p => p._id !== postId);
-      this.cdr.markForCheck();
+    // Guardar el ID para confirmar después
+    this.pendingDeletePostId = postId;
+    this.deleteModalMessage = '¿Estás seguro de que deseas eliminar esta publicación?';
+    this.showDeleteModal = true;
+    this.cdr.markForCheck();
+  }
+
+  // Método para confirmar eliminación
+  confirmDelete() {
+    if (!this.pendingDeletePostId) return;
+
+    this.postService.deletePost(this.pendingDeletePostId).subscribe({
+      next: () => {
+        this.posts = this.posts.filter(p => p._id !== this.pendingDeletePostId);
+        this.showDeleteModal = false;
+        this.pendingDeletePostId = null;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error al eliminar post:', err);
+        this.showDeleteModal = false;
+        this.pendingDeletePostId = null;
+        this.cdr.markForCheck();
+      }
     });
+  }
+
+  // Método para cancelar eliminación
+  cancelDelete() {
+    this.showDeleteModal = false;
+    this.pendingDeletePostId = null;
+    this.cdr.markForCheck();
   }
 
   changeOrder(o: 'fecha' | 'likes') {
