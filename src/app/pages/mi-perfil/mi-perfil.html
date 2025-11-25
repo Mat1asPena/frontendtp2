@@ -1,9 +1,4 @@
 <section class="profile-container">
-    @if (errorMessage) {
-        <div style="padding: 20px; background-color: #f8d7da; color: #721c24; border-radius: 5px; margin: 20px;">
-            <strong>⚠️ Error:</strong> {{ errorMessage }}
-        </div>
-    }
     
     @if (user) {
         <div class="profile-card">
@@ -16,23 +11,74 @@
                     <p class="profile-username">@{{ user?.nombreUsuario }}</p>
                     <p class="profile-description">{{ user?.descripcion || 'Sin descripción' }}</p>
                 </div>
-                <button class="edit-btn" (click)="mostrarModal = true">✏️ Editar</button>
+                <button class="edit-btn" (click)="abrirEdicion()">✏️ Editar</button>
+                <app-modal [show]="mostrarModal" title="Editar Perfil" (close)="mostrarModal = false" (confirm)="guardarCambios()">
+                    <form [formGroup]="editForm" class="edit-form">
+                        
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input formControlName="nombre">
+                            @if (editForm.get('nombre')?.touched && editForm.get('nombre')?.invalid) {
+                                <small class="error-text">Requerido (min 2 caracteres)</small>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label>Apellido</label>
+                            <input formControlName="apellido">
+                            @if (editForm.get('apellido')?.touched && editForm.get('apellido')?.invalid) {
+                                <small class="error-text">Requerido (min 2 caracteres)</small>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea formControlName="descripcion"></textarea>
+                            @if (editForm.get('descripcion')?.hasError('maxlength')) {
+                                <small class="error-text">Máximo 200 caracteres</small>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cambiar Foto</label>
+                            <input type="file" (change)="onFileChange($event)" accept="image/*">
+                            
+                            @if (imagePreview) {
+                                <div class="preview-box">
+                                    <p>Previsualización:</p>
+                                    <img [src]="imagePreview" class="avatar-preview">
+                                </div>
+                            }
+                        </div>
+
+                    </form>
+                </app-modal>
             </div>
 
-            <h4 class="profile-subtitle">Últimas publicaciones</h4>
+            <h4 class="profile-subtitle">Mis Publicaciones</h4>
+
+            @if (myPosts.length > 0) {
+                <div class="profile-posts-list">
+                    @for (post of myPosts; track post._id) {
+                        <div class="profile-post-item">
+                            <div class="post-content">
+                                <strong>{{ post.titulo }}</strong>
+                                <p class="post-snippet">{{ post.mensaje | slice:0:50 }}...</p>
+                            </div>
+                            <div class="post-meta">
+                                <span class="date">{{ post.createdAt | date:'shortDate' }}</span>
+                                <span class="likes">❤️ {{ post.likes }}</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <p class="no-posts">No has realizado publicaciones aún.</p>
+            }
         </div>
     }
 </section>
 
-<app-modal [show]="mostrarModal" title="Editar Perfil" (close)="mostrarModal = false" (confirm)="guardarCambios()">
-    <form class="edit-form">
-        <label>Nombre:</label>
-        <input [(ngModel)]="editData.nombre" name="nombre">
-        
-        <label>Apellido:</label>
-        <input [(ngModel)]="editData.apellido" name="apellido">
-        
-        <label>Descripción:</label>
-        <textarea [(ngModel)]="editData.descripcion" name="descripcion"></textarea>
-    </form>
+<app-modal [show]="showMsgModal" [title]="msgTitle" (close)="showMsgModal = false" (confirm)="showMsgModal = false">
+    <p>{{ msgText }}</p>
 </app-modal>
