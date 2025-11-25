@@ -38,7 +38,7 @@
         </header>
 
         <div class="posts-list">
-            @for (post of posts.slice(0, limit); track post._id) {
+            @for (post of posts; track post._id) {
                 <article class="post-card">
                     <h3>{{ post.titulo }}</h3>
                     <p>{{ post.mensaje }}</p>
@@ -111,7 +111,12 @@
         </div>
 
         <div class="posts-more">
-            <button (click)="loadMore()">Cargar más</button>
+            @if (!isLoading && posts.length >= limit) {
+                <button (click)="loadMore()">Cargar más</button>
+            }
+            @if (isLoading) {
+                <p>Cargando...</p>
+            }
         </div>
     </div>
 </section>

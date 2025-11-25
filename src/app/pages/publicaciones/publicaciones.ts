@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { PostService, PostFront as PostFront, Comentario } from '../../core/services/posts.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -17,6 +17,7 @@ interface PostUI extends PostFront {
   imports: [ReactiveFormsModule, DatePipe, FormsModule],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class Publicaciones implements OnInit {
@@ -30,11 +31,13 @@ export class Publicaciones implements OnInit {
   postImagePreview: string | ArrayBuffer | null = null;
   editingComment: { [key: string]: boolean } = {};
   editingText: { [key: string]: string } = {};
+  isLoading = false;
 
   constructor(
     public auth: AuthService,
     private postService: PostService,
     private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -48,6 +51,8 @@ export class Publicaciones implements OnInit {
     });
 
     if (this.isBrowser) {
+      this.page = 1;
+      this.posts = [];
       this.loadPostsFromBackend();
     }
   }
@@ -66,6 +71,8 @@ export class Publicaciones implements OnInit {
   }
 
   loadPostsFromBackend() {
+    this.isLoading = true;
+    this.cdr.markForCheck();
     this.postService.getPosts(this.orderBy, this.limit, this.page).subscribe((newPosts) => {
       const mappedPosts = this.mapPosts(newPosts);
       if (this.page === 1) {
@@ -73,6 +80,12 @@ export class Publicaciones implements OnInit {
       } else {
         this.posts = [...this.posts, ...mappedPosts];
       }
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    }, (error) => {
+      console.error('Error loading posts:', error);
+      this.isLoading = false;
+      this.cdr.markForCheck();
     });
   }
 
@@ -82,8 +95,12 @@ export class Publicaciones implements OnInit {
       const file = input.files[0];
       this.newPostForm.patchValue({ imagen: file });
       const reader = new FileReader();
-      reader.onload = () => this.postImagePreview = reader.result;
+      reader.onload = () => {
+        this.postImagePreview = reader.result;
+        this.cdr.markForCheck();
+      };
       reader.readAsDataURL(file);
+      this.cdr.markForCheck();
     }
   }
 
@@ -108,9 +125,10 @@ export class Publicaciones implements OnInit {
 
     this.postService.createPost(fd).subscribe(() => {
         this.page = 1;
-        this.loadPostsFromBackend();
         this.newPostForm.reset();
         this.postImagePreview = null;
+        this.cdr.markForCheck();
+        this.loadPostsFromBackend();
     });
   }
 
@@ -121,6 +139,7 @@ export class Publicaciones implements OnInit {
     this.postService.toggleLike(post._id, post.author).subscribe(updated => {
       post.likes = updated.likes;
       post.likedBy = updated.likedBy;
+      this.cdr.markForCheck();
     });
   }
 
@@ -141,6 +160,7 @@ export class Publicaciones implements OnInit {
 
     this.postService.deletePost(postId).subscribe(() => {
       this.posts = this.posts.filter(p => p._id !== postId);
+      this.cdr.markForCheck();
     });
   }
 
@@ -174,6 +194,7 @@ export class Publicaciones implements OnInit {
 
         // 4. Limpiamos el input
         this.commentText[post._id] = '';
+        this.cdr.markForCheck();
       },
       error: (err) => console.error('Error al comentar:', err)
     });
@@ -205,6 +226,7 @@ export class Publicaciones implements OnInit {
             }
         }
         this.cancelEditingComment(comment._id);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error editando comentario', err);
@@ -217,6 +239,7 @@ export class Publicaciones implements OnInit {
     this.orderBy = o;
     this.page = 1;
     this.posts = [];
+    this.cdr.markForCheck();
     this.loadPostsFromBackend();
   }
 
@@ -239,6 +262,7 @@ export class Publicaciones implements OnInit {
             } else {
                 post.hasMoreComments = false;
             }
+            this.cdr.markForCheck();
         },
         error: (err) => console.error('Error loading comments', err)
     });
