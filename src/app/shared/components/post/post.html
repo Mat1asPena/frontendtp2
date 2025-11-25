@@ -1,4 +1,13 @@
 <article class="post-card">
+    
+    <div class="post-header-user">
+        <img [src]="post.authorAvatar || 'assets/default-avatar.png'" class="author-avatar" alt="Foto de {{post.author}}">
+        <div class="author-info">
+            <span class="author-name">@{{ post.author }}</span>
+            <span class="post-date-mini">{{ post.createdAt | date:'mediumDate' }}</span>
+        </div>
+    </div>
+
     <h3>{{ post.titulo }}</h3>
     <p>{{ post.mensaje }}</p>
 
@@ -7,8 +16,7 @@
     }
 
     <div class="post-meta">
-        <span>{{ post.likes }} ♥</span>
-        <span>{{ post.createdAt | date:'short' }}</span>
+        <span>{{ post.likes }} Me gusta</span>
     </div>
 
     <div class="post-actions">
@@ -32,6 +40,7 @@
 
                     @if (editingCommentId !== c._id) {
                         <p>{{ c.texto }}</p>
+                        
                         @if (auth.getUser()?.nombreUsuario === c.autor) {
                             <button class="btn-link-edit" (click)="startEditing(c)">Editar</button>
                         }
@@ -44,6 +53,7 @@
                             </div>
                         </div>
                     }
+                    
                     <small>{{ c.fecha | date:'short' }}</small>
                 </div>
             }

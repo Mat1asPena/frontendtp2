@@ -18,6 +18,7 @@ export interface PostFront {
     likes: number;
     createdAt: string;
     author: string;
+    authorAvatar?: string;
     comentarios: Comentario[];
     likedBy: string[];
 }

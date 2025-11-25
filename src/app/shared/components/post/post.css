@@ -203,3 +203,42 @@
     cursor: pointer;
     font-size: 0.9rem;
 }
+
+/* --- CABECERA DE USUARIO --- */
+.post-header-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.author-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--verde-menta, #b8d5b8); /* Borde suave */
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: 700;
+    color: var(--verde-bosque, #2e5939);
+    font-size: 1rem;
+}
+
+.post-date-mini {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+/* Ajuste para que el título no quede tan pegado a la línea */
+.post-card h3 {
+    margin-top: 5px; 
+}
