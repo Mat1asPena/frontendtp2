@@ -37,7 +37,15 @@ export class Estadisticas implements OnInit {
   public lineChartType: ChartType = 'line';
   public doughnutChartType: ChartType = 'doughnut';
   
-  public chartOptions: ChartConfiguration['options'] = { responsive: true };
+  public chartOptions: ChartConfiguration['options'] = { 
+      responsive: true,
+      maintainAspectRatio: false, // <--- AGREGAR ESTO (Importante)
+      plugins: {
+          legend: {
+              position: 'bottom' // Opcional: pone las etiquetas abajo para ahorrar espacio lateral
+          }
+      }
+  };
 
   private statsService = inject(StatsService);
   private authService = inject(AuthService);

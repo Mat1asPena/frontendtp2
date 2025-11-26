@@ -28,6 +28,11 @@ body {
     min-height: 100vh;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 /* Scroll suave */
 html {
     scroll-behavior: smooth;  

@@ -1,17 +1,32 @@
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Esto hará que se pongan uno al lado del otro si hay espacio */
+    gap: 20px;
+}
+
 .chart-card {
     background: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    /* Asegura que el contenedor tenga altura */
-    min-height: 300px; 
     display: flex;
     flex-direction: column;
+    /* CAMBIAR min-height POR height FIJO o max-height */
+    height: 400px; /* Altura fija para todos */
 }
 
-/* Importante para Chart.js en modo responsive */
+/* O si quieres controlar por tamaños específicos según tus clases HTML */
+.chart-card.large {
+    height: 400px; 
+}
+
+.chart-card.medium {
+    height: 300px; /* El de torta suele necesitar menos altura */
+}
+
 .chart-canvas {
     width: 100%;
     height: 100%;
-    min-height: 250px;
+    /* Elimina min-height si causa conflictos, o redúcelo */
+    /* min-height: 250px; <--- Puedes quitar esto o bajarlo */
 }
