@@ -14,7 +14,6 @@ import { DefaultImgPipe } from '../../../shared/pipes/default-img.pipe';
   imports: [
     CommonModule, 
     ReactiveFormsModule, 
-    AdminOnlyDirective, 
     RolePipe, 
     ImgErrorDirective,
     DefaultImgPipe 
