@@ -1,25 +1,16 @@
-import { Injectable, inject } from '@angular/core';
-import {
-  HttpInterceptorFn,
-  HttpRequest,
-  HttpEvent,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
-export const authInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<any>,
-  next
-): Observable<HttpEvent<any>> => {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.getToken();
+  const token = authService.getToken(); // Debe traer el token del localStorage
 
   if (token) {
-    // Clonar la request y agregar el header Authorization
     req = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}` // Aquí se adjunta el token
+      }
     });
   }
 
