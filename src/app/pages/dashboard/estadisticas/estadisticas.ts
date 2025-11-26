@@ -27,22 +27,20 @@ export class Estadisticas implements OnInit {
   isLoading = true;
   error = '';
 
-  // 1. Usamos ChartData<ChartType> para evitar conflictos en el template con el [type] dinámico
   public barChartData!: ChartData<ChartType>;
   public lineChartData!: ChartData<ChartType>;
   public doughnutChartData!: ChartData<ChartType>;
 
-  // Tipos de Gráficos (se mantienen específicos)
   public barChartType: ChartType = 'bar';
   public lineChartType: ChartType = 'line';
   public doughnutChartType: ChartType = 'doughnut';
   
   public chartOptions: ChartConfiguration['options'] = { 
       responsive: true,
-      maintainAspectRatio: false, // <--- AGREGAR ESTO (Importante)
+      maintainAspectRatio: false,
       plugins: {
           legend: {
-              position: 'bottom' // Opcional: pone las etiquetas abajo para ahorrar espacio lateral
+              position: 'bottom'
           }
       }
   };
@@ -55,13 +53,11 @@ export class Estadisticas implements OnInit {
   ngOnInit() {
     const user = this.authService.getUser();
     
-    // Si NO es administrador, redirigimos y cortamos la ejecución (return)
     if (user?.perfil !== 'administrador') {
       this.router.navigate(['/publicaciones']);
       return; 
     }
 
-    // Si llegamos acá, es admin. Habilitamos la vista y cargamos datos.
     this.isAdmin = true;
     this.loadAllStats();
   }
@@ -70,19 +66,17 @@ export class Estadisticas implements OnInit {
     this.isLoading = true;
     const { startDate, endDate } = this;
 
-    // Usamos forkJoin para enviar las 3 peticiones en paralelo y esperar a TODAS
+    // ACTUALIZACIÓN DE LLAMADA
     forkJoin({
-        posts: this.statsService.getPostsPerUser(),
+        posts: this.statsService.getPostsPerUser(startDate, endDate),
         likes: this.statsService.getLikesByDate(startDate, endDate),
         comments: this.statsService.getCommentsPerPost(startDate, endDate)
     }).subscribe({
         next: (results) => {
-            // 1. Asignamos los datos de cada petición
             this.barChartData = this.mapPostsPerUser(results.posts);
             this.lineChartData = this.mapActivityData(results.likes, 'totalLikes', 'Likes Diarios');
             this.doughnutChartData = this.mapCommentsPerPost(results.comments);
 
-            // 2. Recién ahora, que tenemos TODO, quitamos el loading
             this.isLoading = false;
             this.cdr.markForCheck();
         },
@@ -99,7 +93,6 @@ export class Estadisticas implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
-  // --- Mapeo de Datos (Usando Casteo para el retorno) ---
   mapPostsPerUser(data: any[]): ChartData<ChartType> {
     return {
       labels: data.map(item => `@${item._id}`),

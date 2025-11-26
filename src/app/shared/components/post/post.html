@@ -1,7 +1,7 @@
 <article class="post-card">
     
     <div class="post-header-user">
-        <img [src]="post.authorAvatar || 'assets/default-avatar.png'" class="author-avatar" alt="Foto de {{post.author}}">
+        <img [src]="post.authorAvatar || 'assets/default-avatar.png'" class="author-avatar" alt="Foto de {{post.author}}" appImgError />
         <div class="author-info">
             <span class="author-name">@{{ post.author }}</span>
             <span class="post-date-mini">{{ post.createdAt | date:'mediumDate' }}</span>
@@ -12,7 +12,7 @@
     <p>{{ post.mensaje }}</p>
 
     @if (post.imagenUrl) {
-        <img [src]="post.imagenUrl" class="post-image" alt="Imagen de publicación" />
+        <img [src]="post.imagenUrl" class="post-image" alt="Imagen de publicación" appImgError />
     }
 
     <div class="post-meta">
@@ -22,7 +22,7 @@
     <div class="post-actions">
         <button (click)="toggleLike()">♥</button>
 
-        @if (auth.getUser()?.nombreUsuario === post.author) {
+        @if (auth.getUser()?.nombreUsuario === post.author || auth.getUser()?.perfil === 'administrador') {
             <button (click)="deletePost()">Eliminar</button>
         }
     </div>

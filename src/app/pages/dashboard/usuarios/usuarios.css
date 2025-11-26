@@ -1,23 +1,71 @@
 .container {
-    padding: 20px; background: white; border-radius: 8px; margin-top: 20px; 
+    padding: 20px; 
+    background: white; 
+    border-radius: 8px; 
+    margin-top: 20px; 
 }
 
+.create-user-card {
+    background: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+.user-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+}
+.form-row { 
+    display: flex; 
+    gap: 10px; 
+}
+.form-row input, .form-row select { 
+    flex: 1; 
+}
+.role-selection { 
+    display: flex; 
+    gap: 15px; 
+    align-items: center; 
+    margin: 10px 0; 
+}
+.file-upload-row label {
+    margin-right: 10px;
+    font-weight: 600;
+}
+
+
 .users-table {
-    width: 100%; border-collapse: collapse; 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px;
 }
 
 th, td {
-    padding: 10px; border-bottom: 1px solid #ddd; text-align: left; 
+    padding: 10px; 
+    border-bottom: 1px solid #ddd; 
+    text-align: left; 
+}
+
+.user-avatar {
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .badge-ok {
-    color: green; font-weight: bold; 
+    color: var(--verde-bosque); 
+    font-weight: bold; 
 }
 
 .badge-error {
-    color: red; font-weight: bold; 
+    color: #c0392b; 
+    font-weight: bold; 
 }
 
 button {
-    padding: 5px 10px; font-size: 0.8rem; 
+    padding: 5px 10px; 
+    font-size: 0.8rem; 
 }

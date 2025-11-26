@@ -1,37 +1,71 @@
 <section class="container">
-        <h2>Gestión de Usuarios</h2>
-        @if (error) { <p class="error">{{error}}</p> }
-        
-        <table class="users-table">
-            <thead>
-            <tr>
-                <th>Usuario</th>
-                <th>Email</th>
-                <th>Rol</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+    <h2>Gestión de Usuarios</h2>
+    @if (error) { <p class="error">{{error}}</p> }
+    
+    <div class="create-user-card">
+        <h3>Crear Nuevo Usuario</h3>
+        <form [formGroup]="newUserForm" (ngSubmit)="createUser()" class="user-form">
+            <div class="form-row">
+                <input formControlName="nombre" placeholder="Nombre">
+                <input formControlName="apellido" placeholder="Apellido">
+            </div>
+            <div class="form-row">
+                <input formControlName="correo" placeholder="Correo" type="email">
+                <input formControlName="nombreUsuario" placeholder="Usuario">
+            </div>
+            <div class="form-row">
+                <input formControlName="password" placeholder="Contraseña" type="password">
+                <input formControlName="fechaNacimiento" type="date">
+            </div>
+            
+            <div class="role-selection">
+                <label>Perfil:</label>
+                <label><input type="radio" formControlName="perfil" value="usuario"> Usuario</label>
+                <label><input type="radio" formControlName="perfil" value="administrador"> Administrador</label>
+            </div>
+
+            <div class="form-row file-upload-row">
+                <label>Imagen de perfil (opcional):</label>
+                <input type="file" (change)="onFileChange($event)">
+            </div>
+            <button type="submit" [disabled]="newUserForm.invalid">Crear Usuario</button>
+        </form>
+    </div>
+
+    <table class="users-table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (u of users; track u._id) {
+            <tr appHighlight>
+            <td>
+                <img [src]="u.imagenUrl | defaultImg" alt="Avatar" class="user-avatar" appImgError>
+            </td>
+            <td>{{u.nombreUsuario}}</td>
+            <td>{{u.correo}}</td>
+            <td>{{u.perfil | roleLabel}}</td>
+            <td>
+                <span [class]="u.habilitado ? 'badge-ok' : 'badge-error'">
+                    {{u.habilitado ? 'Activo' : 'Inactivo'}}
+                </span>
+            </td>
+            <td>
+                @if (u.habilitado) {
+                    <button (click)="toggleUser(u._id, false)">Deshabilitar</button>
+                } @else {
+                    <button (click)="toggleUser(u._id, true)">Habilitar</button>
+                }
+            </td>
             </tr>
-            </thead>
-            <tbody>
-            @for (u of users; track u._id) {
-                <tr>
-                <td>{{u.nombreUsuario}}</td>
-                <td>{{u.correo}}</td>
-                <td>{{u.perfil}}</td>
-                <td>
-                    <span [class]="u.habilitado ? 'badge-ok' : 'badge-error'">
-                        {{u.habilitado ? 'Activo' : 'Inactivo'}}
-                    </span>
-                </td>
-                <td>
-                    @if (u.habilitado) {
-                        <button (click)="toggleUser(u._id, false)">Deshabilitar</button>
-                    } @else {
-                        <button (click)="toggleUser(u._id, true)">Habilitar</button>
-                    }
-                </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </section>
+        }
+        </tbody>
+    </table>
+</section>

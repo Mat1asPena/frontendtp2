@@ -7,11 +7,15 @@ export class StatsService {
   private API_URL = 'http://localhost:3000/api/stats';
   constructor(private http: HttpClient) {}
 
-  getPostsPerUser(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/posts-per-user`);
+  // AHORA ACEPTA RANGO DE FECHAS
+  getPostsPerUser(startDate?: string, endDate?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    
+    return this.http.get<any[]>(`${this.API_URL}/posts-per-user`, { params });
   }
 
-  // Métodos que aceptan rango de tiempo
   getLikesByDate(startDate: string, endDate: string): Observable<any[]> {
     const params = new HttpParams().set('startDate', startDate).set('endDate', endDate);
     return this.http.get<any[]>(`${this.API_URL}/likes-by-date`, { params });

@@ -16,6 +16,11 @@ export class UserService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  // NUEVO: Crear usuario (admin)
+  createUser(data: FormData): Observable<any> {
+    return this.http.post(this.apiUrl, data);
+  }
+
   disableUser(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
