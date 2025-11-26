@@ -36,10 +36,10 @@ export class Usuarios implements OnInit {
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      nombreUsuario: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      nombreUsuario: ['', Validators.required], 
+      password: ['', [Validators.required, Validators.minLength(8)]], 
       fechaNacimiento: ['', Validators.required],
-      perfil: ['usuario', Validators.required], // Valor por defecto
+      perfil: ['usuario', Validators.required],
       imagen: [null]
     });
   }
@@ -67,6 +67,7 @@ export class Usuarios implements OnInit {
     }
   }
 
+  // LÓGICA DE CREACIÓN DE USUARIO CON MEJOR MANEJO DE ERRORES
   createUser() {
     if (this.newUserForm.invalid) {
       this.newUserForm.markAllAsTouched();
@@ -75,9 +76,19 @@ export class Usuarios implements OnInit {
 
     const fd = new FormData();
     Object.keys(this.newUserForm.controls).forEach(key => {
-        const val = this.newUserForm.get(key)?.value;
-        if (val) fd.append(key, val);
+        const control = this.newUserForm.get(key);
+        const val = control?.value;
+        
+        // El campo 'imagen' es un archivo, lo manejamos explícitamente
+        if (key === 'imagen' && val instanceof File) {
+            fd.append(key, val, val.name);
+        } else if (key !== 'imagen' && val !== null && val !== undefined) {
+            // El resto de campos (incluyendo nombreUsuario y password)
+            fd.append(key, val);
+        }
     });
+
+    console.log('Intentando crear usuario con FormData...');
 
     this.userService.createUser(fd).subscribe({
         next: () => {
@@ -85,7 +96,23 @@ export class Usuarios implements OnInit {
             this.newUserForm.reset({ perfil: 'usuario', imagen: null });
             alert('Usuario creado con éxito');
         },
-        error: (err) => alert('Error al crear usuario: ' + (err.error?.message || 'Error desconocido'))
+        error: (err) => {
+            // Lógica para mostrar mensajes de error más útiles
+            const backendError = err.error?.message;
+            let errorMessage = 'Error desconocido al crear el usuario.';
+
+            if (typeof backendError === 'string' && backendError.includes('Correo o nombre de usuario ya en uso')) {
+                errorMessage = 'Error: Ya existe un usuario o correo con esa información. Por favor, intente con otros valores.';
+            } else if (Array.isArray(backendError)) {
+                // Errores de validación de NestJS (ej. minLength)
+                errorMessage = 'Error de validación: ' + backendError.join('. ');
+            } else if (backendError) {
+                errorMessage = 'Error del servidor: ' + backendError;
+            }
+            
+            alert(errorMessage);
+            this.newUserForm.markAllAsTouched(); // Asegura que se vean los errores de validación si los hay
+        }
     });
   }
 
