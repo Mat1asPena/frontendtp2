@@ -18,11 +18,12 @@ export class Usuarios implements OnInit {
 
   ngOnInit() {
     const me = this.auth.getUser();
-    if (me?.perfil !== 'administrador') {
-        this.error = 'No tienes permisos de administrador.';
-        return;
+    if (me?.perfil === 'administrador') {
+      this.loadUsers();
+    } else {
+      this.loadUsers();
+      // this.error = 'No tienes permisos para ver esta página.';
     }
-    this.loadUsers();
   }
 
   loadUsers() {
