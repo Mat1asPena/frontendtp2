@@ -9,7 +9,7 @@ import { catchError, map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'any' })
 export class AuthService {
-  private base = 'https://backendtp2-seven.vercel.app/api'; // https://backendtp2-seven.vercel.app || http://localhost:3000/api
+  private base = 'http://localhost:3000/api'; // https://backendtp2-seven.vercel.app || http://localhost:3000/api
   private isBrowser: boolean;
 
   constructor(
