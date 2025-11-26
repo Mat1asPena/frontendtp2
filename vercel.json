@@ -8,6 +8,10 @@
     ],
     "routes": [
         {
+        "src": "/(favicon.ico|images/.*)",
+        "dest": "/dist/frontend/browser/$1"
+        },
+        {
         "src": "/(.*\\.(css|js|map|ico|png|jpg|jpeg|svg|gif|webp|json|txt|xml|woff|woff2|eot|ttf|otf))",
         "dest": "/dist/frontend/browser/$1"
         },
