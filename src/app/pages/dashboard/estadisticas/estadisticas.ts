@@ -6,6 +6,7 @@ import { StatsService } from '../../../core/services/stats.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
+import { forkJoin } from 'rxjs';
 
 Chart.register(...registerables); 
 
@@ -45,46 +46,51 @@ export class Estadisticas implements OnInit {
 
   ngOnInit() {
     const user = this.authService.getUser();
+    
+    // Si NO es administrador, redirigimos y cortamos la ejecución (return)
     if (user?.perfil !== 'administrador') {
       this.router.navigate(['/publicaciones']);
-      return;
+      return; 
     }
+
+    // Si llegamos acá, es admin. Habilitamos la vista y cargamos datos.
     this.isAdmin = true;
     this.loadAllStats();
+  }
+
+  loadAllStats() {
+    this.isLoading = true;
+    const { startDate, endDate } = this;
+
+    // Usamos forkJoin para enviar las 3 peticiones en paralelo y esperar a TODAS
+    forkJoin({
+        posts: this.statsService.getPostsPerUser(),
+        likes: this.statsService.getLikesByDate(startDate, endDate),
+        comments: this.statsService.getCommentsPerPost(startDate, endDate)
+    }).subscribe({
+        next: (results) => {
+            // 1. Asignamos los datos de cada petición
+            this.barChartData = this.mapPostsPerUser(results.posts);
+            this.lineChartData = this.mapActivityData(results.likes, 'totalLikes', 'Likes Diarios');
+            this.doughnutChartData = this.mapCommentsPerPost(results.comments);
+
+            // 2. Recién ahora, que tenemos TODO, quitamos el loading
+            this.isLoading = false;
+            this.cdr.markForCheck();
+        },
+        error: (err) => {
+            console.error('Error cargando estadísticas:', err);
+            this.error = 'No se pudieron cargar los datos del servidor.';
+            this.isLoading = false;
+            this.cdr.markForCheck();
+        }
+    });
   }
 
   getFormattedDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
 
-  loadAllStats() {
-    this.isLoading = true;
-    const { startDate, endDate } = this;
-    
-    this.statsService.getPostsPerUser().subscribe(data => {
-        this.barChartData = this.mapPostsPerUser(data);
-        this.cdr.markForCheck();
-    });
-
-    this.statsService.getCommentsPerPost(startDate, endDate).subscribe(data => {
-        this.doughnutChartData = this.mapCommentsPerPost(data);
-        this.cdr.markForCheck();
-    });
-
-    this.statsService.getLikesByDate(startDate, endDate).subscribe({
-        next: (data) => {
-            this.lineChartData = this.mapActivityData(data, 'totalLikes', 'Likes Diarios');
-            this.isLoading = false;
-            this.cdr.markForCheck();
-        },
-        error: (err) => {
-            this.error = 'Error cargando datos de actividad.';
-            this.isLoading = false;
-            this.cdr.markForCheck();
-        }
-    });
-  }
-  
   // --- Mapeo de Datos (Usando Casteo para el retorno) ---
   mapPostsPerUser(data: any[]): ChartData<ChartType> {
     return {
