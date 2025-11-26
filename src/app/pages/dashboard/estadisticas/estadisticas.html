@@ -2,55 +2,52 @@
     @if (!isAdmin) {
         <div class="unauthorized-message">Acceso denegado. Solo administradores.</div>
     } @else if (isLoading) {
-        <div class="loading-state">Cargando gráficos (requiere NPM install chart.js)...</div>
+        <div class="loading-state">Cargando gráficos...</div>
     } @else if (error) {
         <div class="error-state">{{ error }}</div>
     } @else {
         <div class="stats-container">
-        <h2>Panel de Estadísticas de EcoRed</h2>
-        
-        <div class="time-range-selector">
-            <label>Desde: <input type="date" [(ngModel)]="startDate" (change)="onRangeChange()"></label>
-            <label>Hasta: <input type="date" [(ngModel)]="endDate" (change)="onRangeChange()"></label>
-            <span class="range-info">Mostrando datos entre {{ startDate | date }} y {{ endDate | date }}</span>
-        </div>
-
-        <div class="charts-grid">
+            <h2>Panel de Estadísticas de EcoRed 📊</h2>
             
-            <div class="chart-card large">
-            <h3>Publicaciones por Usuario (Top 10)</h3>
-            <canvas baseChart
-                [type]="barChartType"
-                [datasets]="barChartData.datasets"
-                [labels]="barChartData.labels"
-                [options]="chartOptions"
-                class="chart-canvas">
-            </canvas>
+            <div class="time-range-selector">
+                <label>Desde: <input type="date" [(ngModel)]="startDate" (change)="onRangeChange()"></label>
+                <label>Hasta: <input type="date" [(ngModel)]="endDate" (change)="onRangeChange()"></label>
+                <span class="range-info">Mostrando datos entre {{ startDate | date }} y {{ endDate | date }}</span>
             </div>
-
-            <div class="chart-card large">
-            <h3>Cantidad de Likes Recibidos por Día</h3>
-            <canvas baseChart
-                [type]="lineChartType"
-                [datasets]="lineChartData.datasets"
-                [labels]="lineChartData.labels"
-                [options]="chartOptions"
-                class="chart-canvas">
-            </canvas>
+    
+            <div class="charts-grid">
+                
+                <div class="chart-card large">
+                    <h3>Publicaciones por Usuario (Top 10)</h3>
+                    <canvas baseChart
+                        [type]="barChartType"
+                        [data]="barChartData" 
+                        [options]="chartOptions"
+                        class="chart-canvas">
+                    </canvas>
+                </div>
+    
+                <div class="chart-card large">
+                    <h3>Cantidad de Likes Recibidos por Día</h3>
+                    <canvas baseChart
+                        [type]="lineChartType"
+                        [data]="lineChartData"
+                        [options]="chartOptions"
+                        class="chart-canvas">
+                    </canvas>
+                </div>
+    
+                <div class="chart-card medium">
+                    <h3>Comentarios por Publicación (Top 10)</h3>
+                    <canvas baseChart
+                        [type]="doughnutChartType"
+                        [data]="doughnutChartData"
+                        [options]="chartOptions"
+                        class="chart-canvas">
+                    </canvas>
+                </div>
+                
             </div>
-
-            <div class="chart-card medium">
-            <h3>Comentarios por Publicación (Top 10)</h3>
-            <canvas baseChart
-                [type]="doughnutChartType"
-                [datasets]="doughnutChartData.datasets"
-                [labels]="doughnutChartData.labels"
-                [options]="chartOptions"
-                class="chart-canvas">
-            </canvas>
-            </div>
-            
-        </div>
         </div>
     }
 </section>
