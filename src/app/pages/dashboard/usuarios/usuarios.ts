@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { DefaultImgPipe } from '../../../shared/pipes/default-img.pipe';
   standalone: true,
   imports: [
     CommonModule, 
-    ReactiveFormsModule, 
+    ReactiveFormsModule,  
     RolePipe, 
     ImgErrorDirective,
     DefaultImgPipe 
@@ -23,6 +23,9 @@ import { DefaultImgPipe } from '../../../shared/pipes/default-img.pipe';
 })
 
 export class Usuarios implements OnInit {
+  // REFERENCIA AL INPUT DE TIPO FILE
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  
   users: any[] = [];
   error = '';
   newUserForm: FormGroup;
@@ -67,7 +70,6 @@ export class Usuarios implements OnInit {
     }
   }
 
-  // LÓGICA DE CREACIÓN DE USUARIO CON MEJOR MANEJO DE ERRORES
   createUser() {
     if (this.newUserForm.invalid) {
       this.newUserForm.markAllAsTouched();
@@ -79,39 +81,41 @@ export class Usuarios implements OnInit {
         const control = this.newUserForm.get(key);
         const val = control?.value;
         
-        // El campo 'imagen' es un archivo, lo manejamos explícitamente
         if (key === 'imagen' && val instanceof File) {
             fd.append(key, val, val.name);
         } else if (key !== 'imagen' && val !== null && val !== undefined) {
-            // El resto de campos (incluyendo nombreUsuario y password)
             fd.append(key, val);
         }
     });
 
-    console.log('Intentando crear usuario con FormData...');
+    console.log('📤 Intentando crear usuario con FormData...');
 
     this.userService.createUser(fd).subscribe({
         next: () => {
             this.loadUsers();
+            
+            // 👈 LIMPIEZA ADICIONAL: Resetear el formulario y el input de archivo
             this.newUserForm.reset({ perfil: 'usuario', imagen: null });
+            if (this.fileInput) {
+                this.fileInput.nativeElement.value = ''; // Limpia el input type="file" del DOM
+            }
+            
             alert('Usuario creado con éxito');
         },
         error: (err) => {
-            // Lógica para mostrar mensajes de error más útiles
             const backendError = err.error?.message;
             let errorMessage = 'Error desconocido al crear el usuario.';
 
             if (typeof backendError === 'string' && backendError.includes('Correo o nombre de usuario ya en uso')) {
                 errorMessage = 'Error: Ya existe un usuario o correo con esa información. Por favor, intente con otros valores.';
             } else if (Array.isArray(backendError)) {
-                // Errores de validación de NestJS (ej. minLength)
                 errorMessage = 'Error de validación: ' + backendError.join('. ');
             } else if (backendError) {
                 errorMessage = 'Error del servidor: ' + backendError;
             }
             
             alert(errorMessage);
-            this.newUserForm.markAllAsTouched(); // Asegura que se vean los errores de validación si los hay
+            this.newUserForm.markAllAsTouched();
         }
     });
   }

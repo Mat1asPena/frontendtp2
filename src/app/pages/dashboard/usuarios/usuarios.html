@@ -26,7 +26,7 @@
 
             <div class="form-row file-upload-row">
                 <label>Imagen de perfil (opcional):</label>
-                <input type="file" (change)="onFileChange($event)">
+                <input type="file" #fileInput (change)="onFileChange($event)">
             </div>
             <button type="submit" [disabled]="newUserForm.invalid">Crear Usuario</button>
         </form>
