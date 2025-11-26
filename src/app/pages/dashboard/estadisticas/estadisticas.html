@@ -1,51 +1,56 @@
 <section class="stats-page">
     @if (!isAdmin) {
-        <div class="unauthorized-message">Acceso denegado. Solo administradores pueden ver esta página.</div>
+        <div class="unauthorized-message">Acceso denegado. Solo administradores.</div>
     } @else if (isLoading) {
-        <div class="loading-state">Cargando estadísticas...</div>
+        <div class="loading-state">Cargando gráficos (requiere NPM install chart.js)...</div>
     } @else if (error) {
         <div class="error-state">{{ error }}</div>
     } @else {
         <div class="stats-container">
-            <h2>Panel de Estadísticas de EcoRed</h2>
+        <h2>Panel de Estadísticas de EcoRed</h2>
+        
+        <div class="time-range-selector">
+            <label>Desde: <input type="date" [(ngModel)]="startDate" (change)="onRangeChange()"></label>
+            <label>Hasta: <input type="date" [(ngModel)]="endDate" (change)="onRangeChange()"></label>
+            <span class="range-info">Mostrando datos entre {{ startDate | date }} y {{ endDate | date }}</span>
+        </div>
+
+        <div class="charts-grid">
             
-            <div class="metrics-grid">
-                <div class="metric-card total-users">
-                    <h3>Total de Usuarios</h3>
-                    <p>{{ totalUsers }}</p>
-                </div>
+            <div class="chart-card large">
+            <h3>Publicaciones por Usuario (Top 10)</h3>
+            <canvas baseChart
+                [type]="barChartType"
+                [datasets]="barChartData.datasets"
+                [labels]="barChartData.labels"
+                [options]="chartOptions"
+                class="chart-canvas">
+            </canvas>
             </div>
 
-            <div class="metric-card top-posters">
-                <h3>Top 10 Usuarios por Publicaciones</h3>
-                <ul class="stats-list">
-                @for (user of postsPerUser; track user._id) {
-                    <li>
-                    <strong>@{{ user._id }}</strong>
-                    <span class="posts-count">{{ user.totalPosts }} posts</span>
-                    </li>
-                } @empty {
-                    <li>No hay publicaciones aún.</li>
-                }
-                </ul>
+            <div class="chart-card large">
+            <h3>Cantidad de Likes Recibidos por Día</h3>
+            <canvas baseChart
+                [type]="lineChartType"
+                [datasets]="lineChartData.datasets"
+                [labels]="lineChartData.labels"
+                [options]="chartOptions"
+                class="chart-canvas">
+            </canvas>
             </div>
 
-            <div class="metric-card likes-activity">
-                <h3>Likes por Día (Actividad)</h3>
-                <div class="chart-simulation">
-                    <ul class="chart-data-list">
-                        @for (like of likesByDate; track like._id) {
-                        <li>
-                            <span>{{ like._id }}</span>
-                            <strong>{{ like.totalLikes }} Likes</strong>
-                        </li>
-                        } @empty {
-                        <li>No hay datos de likes para mostrar.</li>
-                        }
-                    </ul>
-                </div>
-                <p class="chart-note">Esta tabla muestra el resultado de la agregación de MongoDB. En producción, aquí iría un gráfico de líneas.</p>
+            <div class="chart-card medium">
+            <h3>Comentarios por Publicación (Top 10)</h3>
+            <canvas baseChart
+                [type]="doughnutChartType"
+                [datasets]="doughnutChartData.datasets"
+                [labels]="doughnutChartData.labels"
+                [options]="chartOptions"
+                class="chart-canvas">
+            </canvas>
             </div>
+            
+        </div>
         </div>
     }
 </section>

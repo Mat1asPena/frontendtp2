@@ -18,7 +18,7 @@ export class Usuarios implements OnInit {
 
   ngOnInit() {
     const me = this.auth.getUser();
-    if (me?.rol !== 'administrador') {
+    if (me?.perfil !== 'administrador') {
         this.error = 'No tienes permisos de administrador.';
         return;
     }

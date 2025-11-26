@@ -11,6 +11,12 @@
             @if (auth.isLogged()) {
                 <li><a routerLink="/publicaciones" routerLinkActive="active">Publicaciones</a></li>
                 <li><a routerLink="/mi-perfil" routerLinkActive="active">Mi perfil</a></li>
+                
+                @if (auth.getUser()?.perfil === 'administrador') {
+                    <li><a routerLink="/dashboard/usuarios" routerLinkActive="active" style="color: #d9534f; font-weight: bold;">Gestión Usuarios</a></li>
+                    <li><a routerLink="/dashboard/estadisticas" routerLinkActive="active" style="color: #03a89e; font-weight: bold;">Estadísticas</a></li>
+                }
+
                 <li><a style="cursor: pointer;" (click)="logout()">Cerrar Sesión</a></li>
             } @else {
                 <li><a routerLink="/register" routerLinkActive="active">Registro</a></li>
@@ -30,6 +36,12 @@
             @if (auth.isLogged()) {
                 <li><a routerLink="/publicaciones" (click)="toggleMenu()">Publicaciones</a></li>
                 <li><a routerLink="/mi-perfil" (click)="toggleMenu()">Mi perfil</a></li>
+
+                @if (auth.getUser()?.perfil === 'administrador') {
+                    <li><a routerLink="/dashboard/usuarios" (click)="toggleMenu()" style="color: #d9534f;">Gestión Usuarios</a></li>
+                    <li><a routerLink="/dashboard/estadisticas" (click)="toggleMenu()" style="color: #03a89e;">Estadísticas</a></li>
+                }
+
                 <li><a style="cursor: pointer;" (click)="logout()">Cerrar Sesión</a></li>
             } @else {
                 <li><a routerLink="/register" (click)="toggleMenu()">Registro</a></li>

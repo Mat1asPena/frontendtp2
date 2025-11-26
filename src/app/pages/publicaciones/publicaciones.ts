@@ -166,7 +166,7 @@ export class Publicaciones implements OnInit {
     if (!post) return;
 
     const isOwner = post.author === currentUser.nombreUsuario;
-    const isAdmin = currentUser.rol === 'administrador';
+    const isAdmin = currentUser.perfil === 'administrador';
 
     if (!isOwner && !isAdmin) {
       this.deleteModalMessage = 'Solo el autor o un administrador pueden eliminar esta publicación.';

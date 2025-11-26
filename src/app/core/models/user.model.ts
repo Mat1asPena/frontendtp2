@@ -6,7 +6,7 @@
     nombreUsuario: string;
     fechaNacimiento?: string; // ISO
     descripcion?: string;
-    rol?: 'usuario' | 'administrador';
     imagenUrl?: string;
     habilitado?: boolean;
+    perfil: 'usuario' | 'administrador';
 }
